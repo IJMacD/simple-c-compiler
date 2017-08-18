@@ -2,8 +2,11 @@
 
 #include "lexer.c"
 #include "parser.c"
+#include "traverser.c"
 #include "generator.c"
 #include "linker.c"
+
+ast_node* operator_switcher(ast_node *);
 
 int main(int argc, char **argv){
   char input_buffer[255] = { 0 };
@@ -15,7 +18,7 @@ int main(int argc, char **argv){
     int i;
     int offset = 0;
     for(i = 1; i < argc; i++) {
-      if(argv[i][0] == '-') {
+      if(argv[i][0] == '-' && argv[i][1] != '\0') {
         if(argv[i][1] == 'r') {
           retain_output = 1;
         }
@@ -59,12 +62,18 @@ int main(int argc, char **argv){
   ast_node *root_node = parser(tokens);
 
   if (verbose) {
-    debug_node(root_node->param1);
+    debug_node(root_node);
+  }
+
+  ast_node *new_root = traverser(root_node, operator_switcher);
+
+  if (verbose) {
+    debug_node(new_root);
   }
 
   int linker_flags = 0;
 
-  char *program = generator(root_node, &linker_flags);
+  char *program = generator(new_root, &linker_flags);
 
   char *output = linker(program, linker_flags);
 
@@ -91,10 +100,29 @@ int main(int argc, char **argv){
   }
 }
 
-/*    TRAVERSER   */
+ast_node* operator_switcher(ast_node *node) {
+  if (node->type == NODE_OPERATOR) {
+    node->type = NODE_CALL;
+
+    if (node->string_val[0] == '+') {
+      node->string_val = malloc(4);
+      memcpy(node->string_val, "add", 4);
+    }
+    else if (node->string_val[0] == '-') {
+      node->string_val = malloc(9);
+      memcpy(node->string_val, "subtract", 9);
+    }
+    else if (node->string_val[0] == '*') {
+      node->string_val = malloc(9);
+      memcpy(node->string_val, "multiply", 9);
+    }
+    else if (node->string_val[0] == '/') {
+      node->string_val = malloc(7);
+      memcpy(node->string_val, "divide", 7);
+    }
+  }
+
+  return node;
+}
 
 /*    TRANSFORMER   */
-
-/*    CODE GENERATOR    */
-
-/*    COMPILER    */
