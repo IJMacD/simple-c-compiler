@@ -5,16 +5,28 @@
 #include "generator.c"
 
 int main(int argc, char **argv){
-  char input_buffer[255];
+  char input_buffer[255] = { 0 };
+  int retain_output = 0;
 
   if(argc > 1) {
     int i;
     int offset = 0;
     for(i = 1; i < argc; i++) {
-      strcpy(&input_buffer[offset], argv[i]);
-      offset += strlen(argv[i]);
-      input_buffer[offset] = ' ';
-      offset++;
+      if(argv[i][0] == '-') {
+        if(argv[i][1] == 'r') {
+          retain_output = 1;
+        }
+        else {
+          printf("Unknown option %s\n", argv[i]);
+          exit(-1);
+        }
+      }
+      else {
+        strcpy(&input_buffer[offset], argv[i]);
+        offset += strlen(argv[i]);
+        input_buffer[offset] = ' ';
+        offset++;
+      }
     }
 
     input_buffer[offset] = '\0';
@@ -49,10 +61,16 @@ int main(int argc, char **argv){
   fprintf(f, "%s\n", output);
   fclose(f);
 
-  system("clang output.c -o output && ./output");
+#ifdef linux
+  system("clang output.c -o output && ./output && rm output");
+#endif
+
+  if (!retain_output) {
+    remove("output.c");
+  }
 }
 
-/*    TRANSVERSER   */
+/*    TRAVERSER   */
 
 /*    TRANSFORMER   */
 

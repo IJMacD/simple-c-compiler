@@ -5,7 +5,7 @@
       "name": "(Windows) Launch",
       "type": "cppvsdbg",
       "request": "launch",
-      "program": "${workspaceRoot}/calc.exe",
+      "program": "${workspaceRoot}/build/calc.exe",
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceRoot}",

@@ -113,7 +113,7 @@ token_list* lexer(char *source) {
         continue;
       }
 
-      printf("Lexer Error: Unrecognised token.\n");
+      printf("Lexer Error: Unrecognised token {%c}.\n", c);
       exit(-1);
     }
 
