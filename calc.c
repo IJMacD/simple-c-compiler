@@ -56,10 +56,16 @@ int main(int argc, char **argv){
   // printf("Param2 node value: %s\n", param2->string_val);
 
   char *output = generate(root_node);
+
+  free_tokens(tokens);
+  free_node(root_node);
+
   // printf("%s\n", output);
   FILE *f = fopen("output.c", "w");
   fprintf(f, "%s", output);
   fclose(f);
+
+  free(output);
 
 #ifdef linux
   system("clang output.c -o output && ./output && rm output");

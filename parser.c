@@ -15,6 +15,7 @@ typedef struct ast_node_struct {
 } ast_node;
 
 ast_node* walk(int*, token_list *);
+void free_node(ast_node *);
 
 /*    PARSER    */
 ast_node* parser(token_list *tokens) {
@@ -74,4 +75,14 @@ ast_node* walk(int *index, token_list *tokens) {
   }
 
   return NULL;
+}
+
+void free_node(ast_node *node) {
+  if(node->type == NODE_PROGRAM) {
+    free_node(node->param1);
+  } else if(node->type == NODE_CALL) {
+    free_node(node->param1);
+    free_node(node->param2);
+  }
+  free(node);
 }
