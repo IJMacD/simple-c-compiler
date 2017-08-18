@@ -7,6 +7,8 @@ char* generate_call(ast_node *);
 char* generate_number(ast_node *);
 char* generate_string(ast_node *);
 
+int append(char *, int *, char const *);
+
 #define FLAG_INCLUDE_ADD 1
 #define FLAG_INCLUDE_SUBTRACT 2
 
@@ -68,21 +70,16 @@ char* generate_program(ast_node *node) {
   char *output = malloc(output_len);
   int offset = 0;
 
-  memcpy(&output[offset], head, head_len);
-  offset += head_len;
-  memcpy(&output[offset], body, body_len);
-  offset += body_len;
-  memcpy(&output[offset], tail, tail_len);
-  offset += tail_len;
+  append(output, &offset, head);
+  append(output, &offset, body);
+  append(output, &offset, tail);
 
   if(include_flags & FLAG_INCLUDE_ADD) {
-    memcpy(&output[offset], include_add, include_add_len);
-    offset += include_add_len;
+    append(output, &offset, include_add);
   }
 
   if(include_flags & FLAG_INCLUDE_SUBTRACT) {
-    memcpy(&output[offset], include_subtract, include_subtract_len);
-    offset += include_subtract_len;
+    append(output, &offset, include_subtract);
   }
 
   output[offset] = '\0';
@@ -98,6 +95,7 @@ char* generate_call (ast_node *node) {
     exit(-1);
   }
   char *param1 = generate(node->param1);
+
   if(node->param2 == NULL) {
     printf("Generator Error: `%s` Missing second paramater.\n", node->string_val);
     exit(-1);
@@ -118,14 +116,16 @@ char* generate_call (ast_node *node) {
   }
 
   char *output = malloc(name_len + param1_len + param2_len + 5);
+  int offset = 0;
 
-  memcpy(output, node->string_val, name_len);
-  output[name_len] = '(';
-  memcpy(&output[name_len + 1], param1, param1_len);
-  output[name_len + param1_len + 1] = ',';
-  output[name_len + param1_len + 2] = ' ';
-  memcpy(&output[name_len + param1_len + 3], param2, param2_len);
-  output[name_len + param1_len + param2_len + 3] = ')';
+  append(output, &offset, node->string_val);
+  output[offset++] = '(';
+  append(output, &offset, param1);
+  output[offset++] = ',';
+  output[offset++] = ' ';
+  append(output, &offset, param2);
+  output[offset++] = ')';
+  output[offset++] = '\0';
 
   free(param1);
   free(param2);
@@ -149,4 +149,11 @@ char* generate_string(ast_node *node) {
   output[string_len + 2] = '\0';
 
   return output;
+}
+
+int append(char *dest, int *offset, char const *source) {
+  int size = strlen(source);
+  memcpy(&dest[*offset], source, size);
+  (*offset) += size;
+  return size;
 }

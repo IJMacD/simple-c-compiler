@@ -58,7 +58,7 @@ int main(int argc, char **argv){
   char *output = generate(root_node);
   // printf("%s\n", output);
   FILE *f = fopen("output.c", "w");
-  fprintf(f, "%s\n", output);
+  fprintf(f, "%s", output);
   fclose(f);
 
 #ifdef linux
