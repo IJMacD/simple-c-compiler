@@ -7,6 +7,11 @@ char* generate_call(ast_node *);
 char* generate_number(ast_node *);
 char* generate_string(ast_node *);
 
+#define FLAG_INCLUDE_ADD 1
+#define FLAG_INCLUDE_SUBTRACT 2
+
+int include_flags = 0;
+
 char* generate(ast_node *node) {
   if(node == NULL) {
     printf("Generator Error: Missing Node.\n");
@@ -34,7 +39,9 @@ char* generate(ast_node *node) {
 
 char* generate_program(ast_node *node) {
   char head[] = "#include <stdio.h>\n\nint add(int, int);\nint subtract(int, int);\n\nint main(){\n\tint result = ";
-  char tail[] = ";\n\tprintf(\"%d\\n\", result);\n}\n\nint add(int a, int b) { return a + b; }\nint subtract(int a, int b) { return a - b; }\n";
+  char tail[] = ";\n\tprintf(\"%d\\n\", result);\n}\n";
+  char include_add[] = "int add(int a, int b) { return a + b; }\n";
+  char include_subtract[] = "int subtract(int a, int b) { return a - b; }\n";
 
   char *body;
 
@@ -42,15 +49,43 @@ char* generate_program(ast_node *node) {
     body = generate(node->param1);
   }
 
-  int head_len = strlen(head);
-  int body_len = strlen(body);
-  int tail_len = strlen(tail);
-  char *output = malloc(head_len + body_len + tail_len + 1);
+  const int head_len = strlen(head);
+  const int body_len = strlen(body);
+  const int tail_len = strlen(tail);
+  const int include_add_len = strlen(include_add);
+  const int include_subtract_len = strlen(include_subtract);
 
-  memcpy(output, head, head_len);
-  memcpy(&output[head_len], body, body_len);
-  memcpy(&output[head_len + body_len], tail, tail_len);
-  output[head_len + body_len + tail_len] = '\0';
+  int output_len = head_len + body_len + tail_len + 1;
+
+  if(include_flags & FLAG_INCLUDE_ADD) {
+    output_len += include_add_len;
+  }
+
+  if(include_flags & FLAG_INCLUDE_SUBTRACT) {
+    output_len += include_subtract_len;
+  }
+
+  char *output = malloc(output_len);
+  int offset = 0;
+
+  memcpy(&output[offset], head, head_len);
+  offset += head_len;
+  memcpy(&output[offset], body, body_len);
+  offset += body_len;
+  memcpy(&output[offset], tail, tail_len);
+  offset += tail_len;
+
+  if(include_flags & FLAG_INCLUDE_ADD) {
+    memcpy(&output[offset], include_add, include_add_len);
+    offset += include_add_len;
+  }
+
+  if(include_flags & FLAG_INCLUDE_SUBTRACT) {
+    memcpy(&output[offset], include_subtract, include_subtract_len);
+    offset += include_subtract_len;
+  }
+
+  output[offset] = '\0';
 
   free(body);
 
@@ -72,6 +107,15 @@ char* generate_call (ast_node *node) {
   int name_len = strlen(node->string_val);
   int param1_len = strlen(param1);
   int param2_len = strlen(param2);
+
+  if(!strcmp("add", node->string_val)){
+    include_flags |= FLAG_INCLUDE_ADD;
+  } else if (!strcmp("subtract", node->string_val)) {
+    include_flags |= FLAG_INCLUDE_SUBTRACT;
+  } else {
+    printf("Generator Error: Unrecognised call target `%s`.\n", node->string_val);
+    exit(1);
+  }
 
   char *output = malloc(name_len + param1_len + param2_len + 5);
 
