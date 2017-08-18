@@ -3,6 +3,7 @@
 #include "lexer.c"
 #include "parser.c"
 #include "generator.c"
+#include "linker.c"
 
 int main(int argc, char **argv){
   char input_buffer[255] = { 0 };
@@ -55,10 +56,15 @@ int main(int argc, char **argv){
   // ast_node *param2 = root_node->param1->param2;
   // printf("Param2 node value: %s\n", param2->string_val);
 
-  char *output = generate(root_node);
+  int linker_flags = 0;
+
+  char *program = generator(root_node, &linker_flags);
+
+  char *output = linker(program, linker_flags);
 
   free_tokens(tokens);
   free_node(root_node);
+  free(program);
 
   // printf("%s\n", output);
   FILE *f = fopen("output.c", "w");
