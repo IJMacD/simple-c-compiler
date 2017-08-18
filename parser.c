@@ -16,6 +16,8 @@ typedef struct ast_node_struct {
 
 ast_node* walk(int*, token_list *);
 void free_node(ast_node *);
+void debug_node(ast_node *);
+void debug_node_val(ast_node *, int);
 
 /*    PARSER    */
 ast_node* parser(token_list *tokens) {
@@ -85,4 +87,32 @@ void free_node(ast_node *node) {
     free_node(node->param2);
   }
   free(node);
+}
+
+void debug_node (ast_node *node) {
+  debug_node_val(node, 0);
+}
+
+void debug_node_val(ast_node *node, int depth) {
+  char prefix[10] = { 0 };
+  memset(prefix, ' ', depth);
+
+  if(node->type == NODE_PROGRAM) {
+    printf("%sProgram Node\n", prefix);
+    if(node->param1 != NULL)
+      debug_node_val(node->param1, depth + 1);
+  }
+  else if(node->type == NODE_CALL) {
+    printf("%sCall: %s\n", prefix, node->string_val);
+    if(node->param1 != NULL)
+      debug_node_val(node->param1, depth + 1);
+    if(node->param2 != NULL)
+      debug_node_val(node->param2, depth + 1);
+  }
+  else if (node->type == NODE_NUMBER) {
+    printf("%sNumber: %d\n", prefix, node->int_val);
+  }
+  else if (node->type == NODE_STRING) {
+    printf("%sString: \"%s\"\n", prefix, node->string_val);
+  }
 }

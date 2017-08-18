@@ -6,7 +6,7 @@
       "type": "cppvsdbg",
       "request": "launch",
       "program": "${workspaceRoot}/build/calc.exe",
-      "args": [],
+      "args": ["-r", "add 99 7"],
       "stopAtEntry": false,
       "cwd": "${workspaceRoot}",
       "environment": [],

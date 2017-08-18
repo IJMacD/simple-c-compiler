@@ -8,6 +8,8 @@
 int main(int argc, char **argv){
   char input_buffer[255] = { 0 };
   int retain_output = 0;
+  int print_output = 0;
+  int verbose = 0;
 
   if(argc > 1) {
     int i;
@@ -16,6 +18,12 @@ int main(int argc, char **argv){
       if(argv[i][0] == '-') {
         if(argv[i][1] == 'r') {
           retain_output = 1;
+        }
+        else if(argv[i][1] == 'p') {
+          print_output = 1;
+        }
+        else if(argv[i][1] == 'v') {
+          verbose = 1;
         }
         else {
           printf("Unknown option %s\n", argv[i]);
@@ -39,22 +47,20 @@ int main(int argc, char **argv){
 
   token_list *tokens = lexer(input_buffer);
 
-  // printf("%d tokens found\n", tokens->length);
+  if (verbose) {
+    printf("%d tokens found\n", tokens->length);
 
-  // int i;
-  // for(i = 0; i < tokens->length; i++) {
-  //   printf("%s\n", tokens->list[i].value);
-  // }
+    int i;
+    for(i = 0; i < tokens->length; i++) {
+      printf("%s\n", tokens->list[i].value);
+    }
+  }
 
   ast_node *root_node = parser(tokens);
 
-  // printf("Root node value: %s\n", root_node->param1->string_val);
-
-  // ast_node *param1 = root_node->param1->param1;
-  // printf("Param1 node value: %s\n", param1->string_val);
-
-  // ast_node *param2 = root_node->param1->param2;
-  // printf("Param2 node value: %s\n", param2->string_val);
+  if (verbose) {
+    debug_node(root_node->param1);
+  }
 
   int linker_flags = 0;
 
@@ -66,7 +72,10 @@ int main(int argc, char **argv){
   free_node(root_node);
   free(program);
 
-  // printf("%s\n", output);
+  if(print_output) {
+    printf("%s\n", output);
+  }
+
   FILE *f = fopen("output.c", "w");
   fprintf(f, "%s", output);
   fclose(f);
