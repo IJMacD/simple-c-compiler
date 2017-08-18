@@ -4,6 +4,7 @@
 #define TOKEN_NAME    1
 #define TOKEN_NUMBER  2
 #define TOKEN_STRING  3
+#define TOKEN_OPERATOR  4
 
 #define DEFAULT_TOKEN_COUNT 100
 
@@ -102,6 +103,19 @@ token_list* lexer(char *source) {
       t->value = malloc(count + 1);
       memcpy(t->value, &source[start], count);
       t->value[count] = '\0';
+
+      continue;
+    }
+
+    if (c == '+' || c == '-' || c == '*' || c == '/') {
+      token *t = &tokens->list[tokens->length++];
+
+      t->type = TOKEN_OPERATOR;
+      t->value = malloc(2);
+      t->value[0] = c;
+      t->value[1] = '\0';
+
+      index++;
 
       continue;
     }

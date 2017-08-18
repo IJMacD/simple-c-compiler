@@ -45,7 +45,8 @@ char* generate(ast_node *node) {
     return generate_string(node);
   }
 
-  return NULL;
+  printf("Generator Error: Unrecognised Node Type: %d\n", node->type);
+  exit(-1);
 }
 
 char* generate_program(ast_node *node) {

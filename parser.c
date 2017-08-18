@@ -5,6 +5,7 @@
 #define NODE_CALL 2
 #define NODE_NUMBER 3
 #define NODE_STRING 4
+#define NODE_OPERATOR 5
 
 typedef struct ast_node_struct {
   int type;
@@ -73,7 +74,24 @@ ast_node* walk(int *index, token_list *tokens) {
       return node;
     }
 
-    return NULL;
+    if(current.type == TOKEN_OPERATOR) {
+      ast_node *node = malloc(sizeof(ast_node));
+      node->type = NODE_OPERATOR;
+      node->string_val = current.value;
+
+      (*index)++;
+
+      node->param1 = walk(index, tokens);
+
+      (*index)++;
+
+      node->param2 = walk(index, tokens);
+
+      return node;
+    }
+
+    printf("Parser Error: Unrecognised Token: %d.\n", current.type);
+    exit(-1);
   }
 
   return NULL;
@@ -114,5 +132,12 @@ void debug_node_val(ast_node *node, int depth) {
   }
   else if (node->type == NODE_STRING) {
     printf("%sString: \"%s\"\n", prefix, node->string_val);
+  }
+  else if(node->type == NODE_OPERATOR) {
+    printf("%sOperator: %s\n", prefix, node->string_val);
+    if(node->param1 != NULL)
+      debug_node_val(node->param1, depth + 1);
+    if(node->param2 != NULL)
+      debug_node_val(node->param2, depth + 1);
   }
 }
