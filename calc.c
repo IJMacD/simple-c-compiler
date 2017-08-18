@@ -13,6 +13,7 @@ int main(int argc, char **argv){
   int retain_output = 0;
   int print_output = 0;
   int verbose = 0;
+  int transform = 0;
 
   if(argc > 1) {
     int i;
@@ -27,6 +28,9 @@ int main(int argc, char **argv){
         }
         else if(argv[i][1] == 'v') {
           verbose = 1;
+        }
+        else if(argv[i][1] == 't') {
+          transform = 1;
         }
         else {
           printf("Unknown option %s\n", argv[i]);
@@ -65,15 +69,17 @@ int main(int argc, char **argv){
     debug_node(root_node);
   }
 
-  ast_node *new_root = traverser(root_node, operator_switcher);
+  if (transform) {
+    root_node = traverser(root_node, operator_switcher);
 
-  if (verbose) {
-    debug_node(new_root);
+    if (verbose) {
+      debug_node(root_node);
+    }
   }
 
   int linker_flags = 0;
 
-  char *program = generator(new_root, &linker_flags);
+  char *program = generator(root_node, &linker_flags);
 
   char *output = linker(program, linker_flags);
 

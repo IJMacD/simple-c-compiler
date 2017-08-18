@@ -7,6 +7,7 @@ char* generate_program(ast_node *);
 char* generate_call(ast_node *);
 char* generate_number(ast_node *);
 char* generate_string(ast_node *);
+char* generate_operator(ast_node *);
 
 int append(char *, int *, char const *);
 
@@ -43,6 +44,10 @@ char* generate(ast_node *node) {
 
   if(node->type == NODE_STRING) {
     return generate_string(node);
+  }
+
+  if(node->type == NODE_OPERATOR) {
+    return generate_operator(node);
   }
 
   printf("Generator Error: Unrecognised Node Type: %d\n", node->type);
@@ -140,6 +145,40 @@ char* generate_string(ast_node *node) {
   memcpy(&output[1], node->string_val, string_len);
   output[string_len + 1] = '"';
   output[string_len + 2] = '\0';
+
+  return output;
+}
+
+char* generate_operator (ast_node *node) {
+  if(node->param1 == NULL) {
+    printf("Generator Error: `%s` Missing first operand.\n", node->string_val);
+    exit(-1);
+  }
+  char *param1 = generate(node->param1);
+
+  if(node->param2 == NULL) {
+    printf("Generator Error: `%s` Missing second operand.\n", node->string_val);
+    exit(-1);
+  }
+  char *param2 = generate(node->param2);
+
+  int param1_len = strlen(param1);
+  int param2_len = strlen(param2);
+
+  char *output = malloc(param1_len + param2_len + 6);
+  int offset = 0;
+
+  output[offset++] = '(';
+  append(output, &offset, param1);
+  output[offset++] = ' ';
+  append(output, &offset, node->string_val);
+  output[offset++] = ' ';
+  append(output, &offset, param2);
+  output[offset++] = ')';
+  output[offset++] = '\0';
+
+  free(param1);
+  free(param2);
 
   return output;
 }
