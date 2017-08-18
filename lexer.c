@@ -108,7 +108,13 @@ token_list* lexer(char *source) {
         continue;
       }
 
-      index++;
+      if(c == ' ') {
+        index++;
+        continue;
+      }
+
+      printf("Lexer Error: Unrecognised token.\n");
+      exit(-1);
     }
 
     return tokens;

@@ -8,6 +8,11 @@ char* generate_number(ast_node *);
 char* generate_string(ast_node *);
 
 char* generate(ast_node *node) {
+  if(node == NULL) {
+    printf("Generator Error: Missing Node.\n");
+    exit(-1);
+  }
+
   if(node->type == NODE_PROGRAM) {
     return generate_program(node);
   }
@@ -31,7 +36,11 @@ char* generate_program(ast_node *node) {
   char head[] = "#include <stdio.h>\n\nint add(int, int);\nint subtract(int, int);\n\nint main(){\n\tint result = ";
   char tail[] = ";\n\tprintf(\"%d\\n\", result);\n}\n\nint add(int a, int b) { return a + b; }\nint subtract(int a, int b) { return a - b; }\n";
 
-  char *body = generate(node->param1);
+  char *body;
+
+  if(node->param1 != NULL){
+    body = generate(node->param1);
+  }
 
   int head_len = strlen(head);
   int body_len = strlen(body);
@@ -49,7 +58,15 @@ char* generate_program(ast_node *node) {
 }
 
 char* generate_call (ast_node *node) {
+  if(node->param1 == NULL) {
+    printf("Generator Error: `%s` Missing first paramater.\n", node->string_val);
+    exit(-1);
+  }
   char *param1 = generate(node->param1);
+  if(node->param2 == NULL) {
+    printf("Generator Error: `%s` Missing second paramater.\n", node->string_val);
+    exit(-1);
+  }
   char *param2 = generate(node->param2);
 
   int name_len = strlen(node->string_val);

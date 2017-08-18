@@ -4,8 +4,27 @@
 #include "parser.c"
 #include "generator.c"
 
-int main(){
-  token_list *tokens = lexer("add 5 subtract 4 2");
+int main(int argc, char **argv){
+  char input_buffer[255];
+
+  if(argc > 1) {
+    int i;
+    int offset = 0;
+    for(i = 1; i < argc; i++) {
+      strcpy(&input_buffer[offset], argv[i]);
+      offset += strlen(argv[i]);
+      input_buffer[offset] = ' ';
+      offset++;
+    }
+
+    input_buffer[offset] = '\0';
+  }
+
+  if(!strlen(input_buffer)) {
+    strcpy(input_buffer, "add 5 subtract 4 2");
+  }
+
+  token_list *tokens = lexer(input_buffer);
 
   // printf("%d tokens found\n", tokens->length);
 
