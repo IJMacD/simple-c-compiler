@@ -6,6 +6,7 @@
 #include "transformer.c"
 #include "generator.c"
 #include "linker.c"
+#include "executor.c"
 
 ast_node* operator_switcher(ast_node *, ast_node *);
 
@@ -15,6 +16,7 @@ int main(int argc, char **argv){
   int print_output = 0;
   int verbose = 0;
   int transform = 0;
+  int execute = 0;
 
   if(argc > 1) {
     int i;
@@ -32,6 +34,9 @@ int main(int argc, char **argv){
         }
         else if(argv[i][1] == 't') {
           transform = 1;
+        }
+        else if(argv[i][1] == 'x') {
+          execute = 1;
         }
         else {
           printf("Unknown option %s\n", argv[i]);
@@ -68,6 +73,10 @@ int main(int argc, char **argv){
 
   if (verbose) {
     debug_node(root_node);
+  }
+
+  if(execute) {
+    execute_node(root_node);
   }
 
   root_node = transformer(root_node);

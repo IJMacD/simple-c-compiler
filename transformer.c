@@ -11,7 +11,7 @@ ast_node *transformer(ast_node *node) {
 ast_node *visitor(ast_node *node, ast_node *parent) {
   // The top level call needs to be wrapped
   if (parent != NULL && parent->type == NODE_PROGRAM &&
-      (node->type == NODE_CALL || node->type == NODE_OPERATOR)) {
+      node->type != NODE_STATEMENT) {
 
     ast_node *print_node = malloc(sizeof(ast_node));
 

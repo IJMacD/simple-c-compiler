@@ -129,7 +129,7 @@ void debug_node (ast_node *node) {
 }
 
 void debug_node_val(ast_node *node, int depth) {
-  char prefix[10] = { 0 };
+  char prefix[32] = { 0 };
   memset(prefix, ' ', depth);
 
   if(node->type == NODE_PROGRAM) {
