@@ -29,7 +29,7 @@ ast_node *visitor(ast_node *node, ast_node *parent) {
     new_node->param1 = format_node;
     new_node->param2 = node;
 
-    parent->param1 = new_node;
+    parent->body[0] = new_node;
 
     return new_node;
   }

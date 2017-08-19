@@ -65,8 +65,8 @@ char* generate_program(ast_node *node) {
 
   char *body;
 
-  if(node->param1 != NULL){
-    body = generate(node->param1);
+  if(node->body[0] != NULL){
+    body = generate(node->body[0]);
   }
 
   int output_len = head_len + strlen(body) + tail_len + 1;

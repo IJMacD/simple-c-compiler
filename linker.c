@@ -4,7 +4,7 @@ char* linker(char *, int);
 
 char* linker(char *program, int include_flags) {
 
-  static const char include_stdio[] = "#include <stdio.h>\n\n";
+  static const char include_stdio[] = "#include <stdio.h>\n";
   static const char include_add[] = "int add(int a, int b) { return a + b; }\n";
   static const char include_sub[] = "int subtract(int a, int b) { return a - b; }\n";
   static const char include_mul[] = "int multiply(int a, int b) { return a * b; }\n";

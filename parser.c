@@ -13,6 +13,8 @@ typedef struct ast_node_struct {
   char *string_val;
   struct ast_node_struct *param1;
   struct ast_node_struct *param2;
+  int body_count;
+  struct ast_node_struct *body[];
 } ast_node;
 
 ast_node* walk(int*, token_list *);
@@ -22,12 +24,13 @@ void debug_node_val(ast_node *, int);
 
 /*    PARSER    */
 ast_node* parser(token_list *tokens) {
-  ast_node *root_node = malloc(sizeof(ast_node));
+  ast_node *root_node = malloc(sizeof(ast_node) + sizeof(ast_node *));
   root_node->type = NODE_PROGRAM;
 
   int index = 0;
 
-  root_node->param1 = walk(&index, tokens);
+  root_node->body[0] = walk(&index, tokens);
+  root_node->body_count++;
 
   if(index < tokens->length - 1){
     printf("Parsing Error: Too many tokens.\n");
@@ -99,7 +102,7 @@ ast_node* walk(int *index, token_list *tokens) {
 
 void free_node(ast_node *node) {
   if(node->type == NODE_PROGRAM) {
-    free_node(node->param1);
+    free_node(node->body[0]);
   } else if(node->type == NODE_CALL) {
     free_node(node->param1);
     free_node(node->param2);
@@ -117,8 +120,8 @@ void debug_node_val(ast_node *node, int depth) {
 
   if(node->type == NODE_PROGRAM) {
     printf("%sProgram Node\n", prefix);
-    if(node->param1 != NULL)
-      debug_node_val(node->param1, depth + 1);
+    if(node->body[0] != NULL)
+      debug_node_val(node->body[0], depth + 1);
   }
   else if(node->type == NODE_CALL) {
     printf("%sCall: %s\n", prefix, node->string_val);
