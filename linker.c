@@ -4,19 +4,23 @@ char* linker(char *, int);
 
 char* linker(char *program, int include_flags) {
 
-  static const char head[] = "#include <stdio.h>\n\n";
+  static const char include_stdio[] = "#include <stdio.h>\n\n";
   static const char include_add[] = "int add(int a, int b) { return a + b; }\n";
   static const char include_sub[] = "int subtract(int a, int b) { return a - b; }\n";
   static const char include_mul[] = "int multiply(int a, int b) { return a * b; }\n";
   static const char include_div[] = "int divide(int a, int b) { return a / b; }\n";
 
-  static const int head_len = sizeof(head) - 1;
+  static const int include_stdio_len = sizeof(include_stdio) - 1;
   static const int include_add_len = sizeof(include_add) - 1;
   static const int include_sub_len = sizeof(include_sub) - 1;
   static const int include_mul_len = sizeof(include_mul) - 1;
   static const int include_div_len = sizeof(include_div) - 1;
 
-  int output_len = head_len + strlen(program) + 1;
+  int output_len = strlen(program) + 1;
+
+  if(include_flags & FLAG_INCLUDE_STDIO) {
+    output_len += include_stdio_len;
+  }
 
   if(include_flags) {
     output_len += 1; // One additional '\n'
@@ -41,7 +45,9 @@ char* linker(char *program, int include_flags) {
   char *output = malloc(output_len);
   int offset = 0;
 
-  append(output, &offset, head);
+  if(include_flags & FLAG_INCLUDE_STDIO) {
+    append(output, &offset, include_stdio);
+  }
 
   if(include_flags & FLAG_INCLUDE_ADD) {
     append(output, &offset, include_add);

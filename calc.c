@@ -3,10 +3,11 @@
 #include "lexer.c"
 #include "parser.c"
 #include "traverser.c"
+#include "transformer.c"
 #include "generator.c"
 #include "linker.c"
 
-ast_node* operator_switcher(ast_node *);
+ast_node* operator_switcher(ast_node *, ast_node *);
 
 int main(int argc, char **argv){
   char input_buffer[255] = { 0 };
@@ -69,6 +70,8 @@ int main(int argc, char **argv){
     debug_node(root_node);
   }
 
+  root_node = transformer(root_node);
+
   if (transform) {
     root_node = traverser(root_node, operator_switcher);
 
@@ -106,7 +109,7 @@ int main(int argc, char **argv){
   }
 }
 
-ast_node* operator_switcher(ast_node *node) {
+ast_node* operator_switcher(ast_node *node, ast_node *parent) {
   if (node->type == NODE_OPERATOR) {
     node->type = NODE_CALL;
 
@@ -130,5 +133,3 @@ ast_node* operator_switcher(ast_node *node) {
 
   return node;
 }
-
-/*    TRANSFORMER   */

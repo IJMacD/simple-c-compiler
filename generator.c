@@ -16,6 +16,8 @@ int append(char *, int *, char const *);
 #define FLAG_INCLUDE_MUL 4
 #define FLAG_INCLUDE_DIV 8
 
+#define FLAG_INCLUDE_STDIO 32
+
 int *include_flags;
 
 char* generator(ast_node *node, int *flags) {
@@ -55,8 +57,8 @@ char* generate(ast_node *node) {
 }
 
 char* generate_program(ast_node *node) {
-  static const char head[] = "int main(){\n\tint result = ";
-  static const char tail[] = ";\n\tprintf(\"%d\\n\", result);\n}\n";
+  static const char head[] = "int main(){\n\t";
+  static const char tail[] = ";\n}\n";
 
   static const int head_len = sizeof(head) - 1;
   static const int tail_len = sizeof(tail) - 1;
@@ -108,6 +110,8 @@ char* generate_call (ast_node *node) {
     *include_flags |= FLAG_INCLUDE_MUL;
   } else if (!strcmp("divide", node->string_val)) {
     *include_flags |= FLAG_INCLUDE_DIV;
+  } else if (!strcmp("printf", node->string_val)) {
+    *include_flags |= FLAG_INCLUDE_STDIO;
   } else {
     printf("Generator Error: Unrecognised call target `%s`.\n", node->string_val);
     exit(1);
