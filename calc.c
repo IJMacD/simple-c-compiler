@@ -131,5 +131,11 @@ ast_node* operator_switcher(ast_node *node, ast_node *parent) {
     }
   }
 
+  // if(node->type == NODE_PROGRAM) {
+  //   realloc(node, sizeof(ast_node) + 2 * sizeof(ast_node *));
+  //   node->body_length++;
+  //   node->body[1] = node->body[0];
+  // }
+
   return node;
 }

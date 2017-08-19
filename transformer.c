@@ -12,12 +12,13 @@ ast_node *visitor(ast_node *node, ast_node *parent) {
   // The top level call needs to be wrapped
   if (parent != NULL && parent->type == NODE_PROGRAM &&
       (node->type == NODE_CALL || node->type == NODE_OPERATOR)) {
-    ast_node *new_node = malloc(sizeof(ast_node));
 
-    new_node->type = NODE_CALL;
+    ast_node *print_node = malloc(sizeof(ast_node));
 
-    new_node->string_val = malloc(7);
-    memcpy(new_node->string_val, "printf", 7);
+    print_node->type = NODE_CALL;
+
+    print_node->string_val = malloc(7);
+    memcpy(print_node->string_val, "printf", 7);
 
     ast_node *format_node = malloc(sizeof(ast_node));
 
@@ -26,12 +27,19 @@ ast_node *visitor(ast_node *node, ast_node *parent) {
     format_node->string_val = malloc(5);
     memcpy(format_node->string_val, "%d\\n", 5);
 
-    new_node->param1 = format_node;
-    new_node->param2 = node;
+    print_node->param1 = format_node;
+    print_node->param2 = node;
 
-    parent->body[0] = new_node;
+    ast_node *statement_node = malloc(sizeof(ast_node) + sizeof(ast_node *));
 
-    return new_node;
+    statement_node->type = NODE_STATEMENT;
+
+    statement_node->body[0] = print_node;
+    statement_node->body_length++;
+
+    parent->body[0] = statement_node;
+
+    return print_node;
   }
 
   return node;

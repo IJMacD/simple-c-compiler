@@ -4,6 +4,7 @@
 char* generator(ast_node *, int *);
 char* generate(ast_node *);
 char* generate_program(ast_node *);
+char* generate_statement(ast_node *);
 char* generate_call(ast_node *);
 char* generate_number(ast_node *);
 char* generate_string(ast_node *);
@@ -36,6 +37,10 @@ char* generate(ast_node *node) {
     return generate_program(node);
   }
 
+  if(node->type == NODE_STATEMENT) {
+    return generate_statement(node);
+  }
+
   if(node->type == NODE_CALL) {
     return generate_call(node);
   }
@@ -57,11 +62,47 @@ char* generate(ast_node *node) {
 }
 
 char* generate_program(ast_node *node) {
-  static const char head[] = "int main(){\n\t";
-  static const char tail[] = ";\n}\n";
+  static const char head[] = "int main(){\n";
+  static const char tail[] = "}\n";
 
   static const int head_len = sizeof(head) - 1;
   static const int tail_len = sizeof(tail) - 1;
+
+  char body[1024];
+  int offset = 0;
+  int  i;
+
+  for(i = 0; i < node->body_length; i++) {
+    if(node->body[i] != NULL){
+      char *child = generate(node->body[i]);
+      int len = strlen(child);
+      if(offset + len > 1024) {
+        printf("Generator Error: Not enough space reserved for body.");
+        exit(-1);
+      }
+      body[offset++] = '\t';
+      append(body, &offset, child);
+      free(child);
+    }
+  }
+
+  body[offset] = '\0';
+
+  int output_len = head_len + offset + tail_len + 1;
+
+  char *output = malloc(output_len);
+  offset = 0;
+
+  append(output, &offset, head);
+  append(output, &offset, body);
+  append(output, &offset, tail);
+
+  output[offset] = '\0';
+
+  return output;
+}
+
+char* generate_statement(ast_node *node) {
 
   char *body;
 
@@ -69,16 +110,15 @@ char* generate_program(ast_node *node) {
     body = generate(node->body[0]);
   }
 
-  int output_len = head_len + strlen(body) + tail_len + 1;
+  int output_len = strlen(body) + 3;
 
   char *output = malloc(output_len);
   int offset = 0;
 
-  append(output, &offset, head);
   append(output, &offset, body);
-  append(output, &offset, tail);
-
-  output[offset] = '\0';
+  output[offset++] = ';';
+  output[offset++] = '\n';
+  output[offset++] = '\0';
 
   free(body);
 

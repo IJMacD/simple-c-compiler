@@ -13,6 +13,13 @@ ast_node *traverse_node(ast_node *node, ast_node *parent, ast_node *(*visitor) (
   ast_node *new_node = visitor(node, parent);
 
   if(new_node->type == NODE_PROGRAM) {
+    int i;
+    for (i = 0; i < node->body_length; i++) {
+      if(new_node->body[i] != NULL)
+        traverse_node(new_node->body[i], new_node, visitor);
+    }
+  }
+  else if(new_node->type == NODE_STATEMENT) {
     if(new_node->body[0] != NULL)
       traverse_node(new_node->body[0], new_node, visitor);
   }
