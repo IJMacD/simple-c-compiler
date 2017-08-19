@@ -74,10 +74,10 @@ int main(int argc, char **argv){
 
   if (transform) {
     root_node = traverser(root_node, operator_switcher);
+  }
 
-    if (verbose) {
-      debug_node(root_node);
-    }
+  if (verbose) {
+    debug_node(root_node);
   }
 
   int linker_flags = 0;
@@ -114,20 +114,16 @@ ast_node* operator_switcher(ast_node *node, ast_node *parent) {
     node->type = NODE_CALL;
 
     if (node->string_val[0] == '+') {
-      node->string_val = malloc(4);
-      memcpy(node->string_val, "add", 4);
+      node->string_val = "add";
     }
     else if (node->string_val[0] == '-') {
-      node->string_val = malloc(9);
-      memcpy(node->string_val, "subtract", 9);
+      node->string_val = "subtract";
     }
     else if (node->string_val[0] == '*') {
-      node->string_val = malloc(9);
-      memcpy(node->string_val, "multiply", 9);
+      node->string_val = "multiply";
     }
     else if (node->string_val[0] == '/') {
-      node->string_val = malloc(7);
-      memcpy(node->string_val, "divide", 7);
+      node->string_val = "divide";
     }
   }
 

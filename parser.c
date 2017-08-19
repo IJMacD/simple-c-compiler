@@ -31,7 +31,7 @@ ast_node* parser(token_list *tokens) {
   int index = 0;
 
   root_node->body[0] = walk(&index, tokens);
-  root_node->body_length++;
+  root_node->body_length = 1;
 
   if(index < tokens->length - 1){
     printf("Parsing Error: Too many tokens.\n");
@@ -103,8 +103,21 @@ ast_node* walk(int *index, token_list *tokens) {
 
 void free_node(ast_node *node) {
   if(node->type == NODE_PROGRAM) {
-    free_node(node->body[0]);
+    int i;
+    for(i = 0; i < node->body_length; i++) {
+      if (node->body[i] != NULL) {
+        free_node(node->body[i]);
+      }
+    }
+  }
+  else if(node->type == NODE_STATEMENT) {
+    if (node->body[0] != NULL) {
+      free_node(node->body[0]);
+    }
   } else if(node->type == NODE_CALL) {
+    free_node(node->param1);
+    free_node(node->param2);
+  } else if(node->type == NODE_OPERATOR) {
     free_node(node->param1);
     free_node(node->param2);
   }
