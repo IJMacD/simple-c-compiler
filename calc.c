@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "lexer.c"
 #include "parser.c"
@@ -9,6 +10,7 @@
 #include "executor.c"
 
 ast_node* operator_switcher(ast_node *, ast_node *);
+ast_node* i_dont_like_9(ast_node *, ast_node *);
 
 int main(int argc, char **argv){
   char input_buffer[255] = { 0 };
@@ -85,6 +87,8 @@ int main(int argc, char **argv){
     root_node = traverser(root_node, operator_switcher);
   }
 
+  root_node = traverser(root_node, i_dont_like_9);
+
   if (verbose) {
     debug_node(root_node);
   }
@@ -142,5 +146,12 @@ ast_node* operator_switcher(ast_node *node, ast_node *parent) {
   //   node->body[1] = node->body[0];
   // }
 
+  return node;
+}
+
+ast_node* i_dont_like_9(ast_node *node, ast_node *parent) {
+  if (node->type == NODE_NUMBER && node->int_val == 9) {
+    node->int_val = rand() % 2 == 1 ? 10 : 8;
+  }
   return node;
 }
