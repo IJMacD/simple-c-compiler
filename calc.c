@@ -9,6 +9,7 @@
 #include "executor.c"
 
 ast_node* operator_switcher(ast_node *, ast_node *);
+void display_help(char *);
 
 int main(int argc, char **argv){
   char input_buffer[255] = { 0 };
@@ -23,24 +24,27 @@ int main(int argc, char **argv){
     int offset = 0;
     for(i = 1; i < argc; i++) {
       if(argv[i][0] == '-' && argv[i][1] != '\0') {
-        if(argv[i][1] == 'r') {
-          retain_output = 1;
-        }
-        else if(argv[i][1] == 'p') {
-          print_output = 1;
-        }
-        else if(argv[i][1] == 'v') {
-          verbose = 1;
-        }
-        else if(argv[i][1] == 't') {
-          transform = 1;
-        }
-        else if(argv[i][1] == 'x') {
-          execute = 1;
-        }
-        else {
-          printf("Unknown option %s\n", argv[i]);
-          exit(-1);
+        switch(argv[i][1]) {
+          case 'r':
+            retain_output = 1;
+            break;
+          case 'p':
+            print_output = 1;
+            break;
+          case 'v':
+            verbose = 1;
+            break;
+          case 't':
+            transform = 1;
+            break;
+          case 'x':
+            execute = 1;
+            break;
+          default:
+            printf("Unknown option %s\n", argv[i]);
+          case 'h':
+            display_help(argv[0]);
+            exit(-1);
         }
       }
       else {
@@ -55,7 +59,8 @@ int main(int argc, char **argv){
   }
 
   if(!strlen(input_buffer)) {
-    strcpy(input_buffer, "add 5 subtract 4 2");
+    display_help(argv[0]);
+    exit(-1);
   }
 
   token_list *tokens = lexer(input_buffer);
@@ -77,6 +82,9 @@ int main(int argc, char **argv){
 
   if(execute) {
     execute_node(root_node);
+    free_tokens(tokens);
+    free_node(root_node);
+    exit(0);
   }
 
   root_node = transformer(root_node);
@@ -143,4 +151,8 @@ ast_node* operator_switcher(ast_node *node, ast_node *parent) {
   // }
 
   return node;
+}
+
+void display_help(char *name) {
+  printf("MancCALC Simple Tokenizer, Parser, Traverser, Transformer, Generator, Linker, Executor\n\nOptions:\n\tr\tRetain output source (don't auto-delete)\n\tp\tPrint generated source to stdout\n\tv\tVerbose output (display tokens and AST)\n\tt\tTransform AST (to function based rather than operator based)\n\tx\tExucute the raw AST (don't generate, link or compile)\n\th\tDisplay this help text\n\nExample:\n\t%s -p \"add 5 subtract 4 2\"\n", name);
 }
