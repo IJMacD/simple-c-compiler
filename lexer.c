@@ -18,10 +18,10 @@ typedef struct token_list_struct {
   token list[];
 } token_list;
 
-token_list* lexer(char *source);
+token_list* lexer(const char *);
 
 /*    LEXER     */
-token_list* lexer(char *source) {
+token_list* lexer(const char *source) {
 
   int index = 0;
   int len = strlen(source);

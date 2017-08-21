@@ -8,16 +8,19 @@
 #include "linker.c"
 #include "executor.c"
 
+#define OPTION_RETAIN     1
+#define OPTION_PRINT      2
+#define OPTION_VERBOSE    4
+#define OPTION_TRANSFORM  8
+#define OPTION_EXECUTE   16
+
+void compiler(const char*, int);
 ast_node* operator_switcher(ast_node *, ast_node *);
 void display_help(char *);
 
 int main(int argc, char **argv){
   char input_buffer[255] = { 0 };
-  int retain_output = 0;
-  int print_output = 0;
-  int verbose = 0;
-  int transform = 0;
-  int execute = 0;
+  int compiler_options = 0;
 
   if(argc > 1) {
     int i;
@@ -26,19 +29,19 @@ int main(int argc, char **argv){
       if(argv[i][0] == '-' && argv[i][1] != '\0') {
         switch(argv[i][1]) {
           case 'r':
-            retain_output = 1;
+            compiler_options |= OPTION_RETAIN;
             break;
           case 'p':
-            print_output = 1;
+            compiler_options |= OPTION_PRINT;
             break;
           case 'v':
-            verbose = 1;
+            compiler_options |= OPTION_VERBOSE;
             break;
           case 't':
-            transform = 1;
+            compiler_options |= OPTION_TRANSFORM;
             break;
           case 'x':
-            execute = 1;
+            compiler_options |= OPTION_EXECUTE;
             break;
           default:
             printf("Unknown option %s\n", argv[i]);
@@ -63,9 +66,14 @@ int main(int argc, char **argv){
     exit(-1);
   }
 
-  token_list *tokens = lexer(input_buffer);
+  compiler(input_buffer, compiler_options);
+}
 
-  if (verbose) {
+void compiler(const char *input, int options) {
+
+  token_list *tokens = lexer(input);
+
+  if (options & OPTION_VERBOSE) {
     printf("%d tokens found\n", tokens->length);
 
     int i;
@@ -76,11 +84,11 @@ int main(int argc, char **argv){
 
   ast_node *root_node = parser(tokens);
 
-  if (verbose) {
+  if (options & OPTION_VERBOSE) {
     debug_node(root_node);
   }
 
-  if(execute) {
+  if(options & OPTION_EXECUTE) {
     execute_node(root_node);
     free_tokens(tokens);
     free_node(root_node);
@@ -89,11 +97,11 @@ int main(int argc, char **argv){
 
   root_node = transformer(root_node);
 
-  if (transform) {
+  if (options & OPTION_TRANSFORM) {
     root_node = traverser(root_node, operator_switcher);
   }
 
-  if (verbose) {
+  if (options & OPTION_VERBOSE) {
     debug_node(root_node);
   }
 
@@ -107,7 +115,7 @@ int main(int argc, char **argv){
   free_node(root_node);
   free(program);
 
-  if(print_output) {
+  if(options & OPTION_PRINT) {
     printf("%s\n", output);
   }
 
@@ -121,7 +129,7 @@ int main(int argc, char **argv){
   system("clang output.c -o output && ./output && rm output");
 #endif
 
-  if (!retain_output) {
+  if (!(options & OPTION_RETAIN)) {
     remove("output.c");
   }
 }
@@ -154,5 +162,16 @@ ast_node* operator_switcher(ast_node *node, ast_node *parent) {
 }
 
 void display_help(char *name) {
-  printf("MancCALC Simple Tokenizer, Parser, Traverser, Transformer, Generator, Linker, Executor\n\nOptions:\n\tr\tRetain output source (don't auto-delete)\n\tp\tPrint generated source to stdout\n\tv\tVerbose output (display tokens and AST)\n\tt\tTransform AST (to function based rather than operator based)\n\tx\tExucute the raw AST (don't generate, link or compile)\n\th\tDisplay this help text\n\nExample:\n\t%s -p \"add 5 subtract 4 2\"\n", name);
+  printf(
+  "Usage: %s [OPTIONS] \"PROGRAM\"\n\n"
+  "MancCALC Simple Tokenizer, Parser, Traverser, Transformer,\n"
+  "Generator, Linker, Executor\n\n"
+  "\t-r\tRetain output source (don't auto-delete)\n"
+  "\t-p\tPrint generated source to stdout\n"
+  "\t-v\tVerbose output (display tokens and AST)\n"
+  "\t-t\tTransform AST (to function based rather than operator based)\n"
+  "\t-x\tExucute the raw AST (don't generate, link or compile)\n"
+  "\t-h\tDisplay this help text\n\n"
+  "Example:\n"
+  "\t%s -p \"add 5 subtract 4 2\"\n", name, name);
 }
