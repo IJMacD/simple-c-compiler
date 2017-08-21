@@ -8,6 +8,11 @@ void executor (ast_node *node) {
 }
 
 int execute_node (ast_node *node) {
+  if(node == NULL) {
+    fprintf(stderr, "Generator Error: Missing Node.\n");
+    exit(-1);
+  }
+
   int i, a, b;
   switch(node->type) {
     case NODE_PROGRAM:
@@ -16,6 +21,14 @@ int execute_node (ast_node *node) {
       }
       return 0;
     case NODE_OPERATOR:
+      if(node->param1 == NULL) {
+        fprintf(stderr, "Executor Error: `%s` Missing first operand.\n", node->string_val);
+        exit(-1);
+      }
+      if(node->param2 == NULL) {
+        fprintf(stderr, "Executor Error: `%s` Missing second operand.\n", node->string_val);
+        exit(-1);
+      }
       a = execute_node(node->param1);
       b = execute_node(node->param2);
       switch(node->string_val[0]) {
