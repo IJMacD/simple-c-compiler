@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "lexer.c"
 #include "parser.c"
@@ -19,6 +20,8 @@ int main(int argc, char **argv){
   int verbose = 0;
   int transform = 0;
   int execute = 0;
+
+  srand(time(NULL));
 
   if(argc > 1) {
     int i;
