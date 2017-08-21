@@ -32,7 +32,7 @@ int execute_node (ast_node *node) {
     case NODE_NUMBER:
       return node->int_val;
     default:
-      printf("Executor Error: Can't execute node type %d\n", node->type);
+      fprintf(stderr, "Executor Error: Can't execute node type %d\n", node->type);
       exit(-1);
   }
 

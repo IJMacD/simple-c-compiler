@@ -29,7 +29,7 @@ char* generator(ast_node *node, int *flags) {
 
 char* generate(ast_node *node) {
   if(node == NULL) {
-    printf("Generator Error: Missing Node.\n");
+    fprintf(stderr, "Generator Error: Missing Node.\n");
     exit(-1);
   }
 
@@ -57,7 +57,7 @@ char* generate(ast_node *node) {
     return generate_operator(node);
   }
 
-  printf("Generator Error: Unrecognised Node Type: %d\n", node->type);
+  fprintf(stderr, "Generator Error: Unrecognised Node Type: %d\n", node->type);
   exit(-1);
 }
 
@@ -77,7 +77,7 @@ char* generate_program(ast_node *node) {
       char *child = generate(node->body[i]);
       int len = strlen(child);
       if(offset + len > 1024) {
-        printf("Generator Error: Not enough space reserved for body.");
+        fprintf(stderr, "Generator Error: Not enough space reserved for body.");
         exit(-1);
       }
       body[offset++] = '\t';
@@ -127,13 +127,13 @@ char* generate_statement(ast_node *node) {
 
 char* generate_call (ast_node *node) {
   if(node->param1 == NULL) {
-    printf("Generator Error: `%s` Missing first paramater.\n", node->string_val);
+    fprintf(stderr, "Generator Error: `%s` Missing first paramater.\n", node->string_val);
     exit(-1);
   }
   char *param1 = generate(node->param1);
 
   if(node->param2 == NULL) {
-    printf("Generator Error: `%s` Missing second paramater.\n", node->string_val);
+    fprintf(stderr, "Generator Error: `%s` Missing second paramater.\n", node->string_val);
     exit(-1);
   }
   char *param2 = generate(node->param2);
@@ -153,7 +153,7 @@ char* generate_call (ast_node *node) {
   } else if (!strcmp("printf", node->string_val)) {
     *include_flags |= FLAG_INCLUDE_STDIO;
   } else {
-    printf("Generator Error: Unrecognised call target `%s`.\n", node->string_val);
+    fprintf(stderr, "Generator Error: Unrecognised call target `%s`.\n", node->string_val);
     exit(1);
   }
 
@@ -195,13 +195,13 @@ char* generate_string(ast_node *node) {
 
 char* generate_operator (ast_node *node) {
   if(node->param1 == NULL) {
-    printf("Generator Error: `%s` Missing first operand.\n", node->string_val);
+    fprintf(stderr, "Generator Error: `%s` Missing first operand.\n", node->string_val);
     exit(-1);
   }
   char *param1 = generate(node->param1);
 
   if(node->param2 == NULL) {
-    printf("Generator Error: `%s` Missing second operand.\n", node->string_val);
+    fprintf(stderr, "Generator Error: `%s` Missing second operand.\n", node->string_val);
     exit(-1);
   }
   char *param2 = generate(node->param2);

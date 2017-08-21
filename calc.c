@@ -8,6 +8,8 @@
 #include "linker.c"
 #include "executor.c"
 
+#define MAX_INPUT_SIZE 1024
+
 #define OPTION_RETAIN     1
 #define OPTION_PRINT      2
 #define OPTION_VERBOSE    4
@@ -16,10 +18,10 @@
 
 void compiler(const char*, int);
 ast_node* operator_switcher(ast_node *, ast_node *);
-void display_help(char *);
+void display_help(FILE *, char *);
 
 int main(int argc, char **argv){
-  char input_buffer[255] = { 0 };
+  char input_buffer[MAX_INPUT_SIZE] = { 0 };
   int compiler_options = 0;
 
   if(argc > 1) {
@@ -43,10 +45,12 @@ int main(int argc, char **argv){
           case 'x':
             compiler_options |= OPTION_EXECUTE;
             break;
-          default:
-            printf("Unknown option %s\n", argv[i]);
           case 'h':
-            display_help(argv[0]);
+            display_help(stdout, argv[0]);
+            exit(0);
+          default:
+            fprintf(stderr, "Unknown option %s\n", argv[i]);
+            display_help(stderr, argv[0]);
             exit(-1);
         }
       }
@@ -62,7 +66,12 @@ int main(int argc, char **argv){
   }
 
   if(!strlen(input_buffer)) {
-    display_help(argv[0]);
+    fgets(input_buffer, MAX_INPUT_SIZE, stdin);
+    input_buffer[MAX_INPUT_SIZE - 1] = '\0';
+  }
+
+  if(!strlen(input_buffer)) {
+    display_help(stderr, argv[0]);
     exit(-1);
   }
 
@@ -74,11 +83,11 @@ void compiler(const char *input, int options) {
   token_list *tokens = lexer(input);
 
   if (options & OPTION_VERBOSE) {
-    printf("%d tokens found\n", tokens->length);
+    fprintf(stderr, "%d tokens found\n", tokens->length);
 
     int i;
     for(i = 0; i < tokens->length; i++) {
-      printf("%s\n", tokens->list[i].value);
+      fprintf(stderr, "%s\n", tokens->list[i].value);
     }
   }
 
@@ -118,20 +127,21 @@ void compiler(const char *input, int options) {
   if(options & OPTION_PRINT) {
     printf("%s\n", output);
   }
-
-  FILE *f = fopen("output.c", "w");
-  fprintf(f, "%s", output);
-  fclose(f);
-
-  free(output);
+  else {
+    FILE *f = fopen("output.c", "w");
+    fprintf(f, "%s", output);
+    fclose(f);
 
 #ifdef linux
-  system("clang output.c -o output && ./output && rm output");
+    system("clang output.c -o output && ./output && rm output");
 #endif
 
-  if (!(options & OPTION_RETAIN)) {
-    remove("output.c");
+    if (!(options & OPTION_RETAIN)) {
+      remove("output.c");
+    }
   }
+
+  free(output);
 }
 
 ast_node* operator_switcher(ast_node *node, ast_node *parent) {
@@ -161,16 +171,16 @@ ast_node* operator_switcher(ast_node *node, ast_node *parent) {
   return node;
 }
 
-void display_help(char *name) {
-  printf(
+void display_help(FILE *fd, char *name) {
+  fprintf(fd,
   "Usage: %s [OPTIONS] \"PROGRAM\"\n\n"
   "MancCALC Simple Tokenizer, Parser, Traverser, Transformer,\n"
   "Generator, Linker, Executor\n\n"
   "\t-r\tRetain output source (don't auto-delete)\n"
-  "\t-p\tPrint generated source to stdout\n"
+  "\t-p\tPrint generated source to stdout, don't compile or execute!\n"
   "\t-v\tVerbose output (display tokens and AST)\n"
   "\t-t\tTransform AST (to function based rather than operator based)\n"
-  "\t-x\tExucute the raw AST (don't generate, link or compile)\n"
+  "\t-x\tExecute the raw AST (don't generate, link or compile)\n"
   "\t-h\tDisplay this help text\n\n"
   "Example:\n"
   "\t%s -p \"add 5 subtract 4 2\"\n", name, name);

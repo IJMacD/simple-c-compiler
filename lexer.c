@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 
 #define TOKEN_NAME    1
@@ -33,7 +34,7 @@ token_list* lexer(const char *source) {
     char c = source[index];
 
     if (tokens->length >= DEFAULT_TOKEN_COUNT) {
-      printf("Lexer Error: Token pool exhausted.\n");
+      fprintf(stderr, "Lexer Error: Token pool exhausted.\n");
       exit(-1);
     }
 
@@ -125,7 +126,12 @@ token_list* lexer(const char *source) {
       continue;
     }
 
-    printf("Lexer Error: Unrecognised token {%c}.\n", c);
+    if(c == '\n' || (c == '\r' && source[index+1] == '\n')) {
+      // New line is the end
+      break;
+    }
+
+    fprintf(stderr, "Lexer Error: Unrecognised token {%c}.\n", c);
     exit(-1);
   }
 

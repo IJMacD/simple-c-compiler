@@ -34,7 +34,7 @@ ast_node* parser(token_list *tokens) {
   root_node->body_length = 1;
 
   if(index < tokens->length - 1){
-    printf("Parsing Error: Too many tokens.\n");
+    fprintf(stderr, "Parsing Error: Too many tokens.\n");
     exit(-1);
   }
 
@@ -94,7 +94,7 @@ ast_node* walk(int *index, token_list *tokens) {
       return node;
     }
 
-    printf("Parser Error: Unrecognised Token: %d.\n", current.type);
+    fprintf(stderr, "Parser Error: Unrecognised Token: %d.\n", current.type);
     exit(-1);
   }
 
@@ -133,7 +133,7 @@ void debug_node_val(ast_node *node, int depth) {
   memset(prefix, ' ', depth);
 
   if(node->type == NODE_PROGRAM) {
-    printf("%sProgram Node\n", prefix);
+    fprintf(stderr, "%sProgram Node\n", prefix);
     int i;
     for(i = 0; i < node->body_length; i++) {
       if(node->body[i] != NULL)
@@ -141,25 +141,25 @@ void debug_node_val(ast_node *node, int depth) {
     }
   }
   else if(node->type == NODE_STATEMENT) {
-    printf("%sStatement\n", prefix);
+    fprintf(stderr, "%sStatement\n", prefix);
     if(node->body[0] != NULL)
       debug_node_val(node->body[0], depth + 1);
   }
   else if(node->type == NODE_CALL) {
-    printf("%sCall: %s\n", prefix, node->string_val);
+    fprintf(stderr, "%sCall: %s\n", prefix, node->string_val);
     if(node->param1 != NULL)
       debug_node_val(node->param1, depth + 1);
     if(node->param2 != NULL)
       debug_node_val(node->param2, depth + 1);
   }
   else if (node->type == NODE_NUMBER) {
-    printf("%sNumber: %d\n", prefix, node->int_val);
+    fprintf(stderr, "%sNumber: %d\n", prefix, node->int_val);
   }
   else if (node->type == NODE_STRING) {
-    printf("%sString: \"%s\"\n", prefix, node->string_val);
+    fprintf(stderr, "%sString: \"%s\"\n", prefix, node->string_val);
   }
   else if(node->type == NODE_OPERATOR) {
-    printf("%sOperator: %s\n", prefix, node->string_val);
+    fprintf(stderr, "%sOperator: %s\n", prefix, node->string_val);
     if(node->param1 != NULL)
       debug_node_val(node->param1, depth + 1);
     if(node->param2 != NULL)
