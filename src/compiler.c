@@ -26,7 +26,7 @@ void compiler(const char *input, int options) {
     execute_node(root_node);
     free_tokens(tokens);
     free_node(root_node);
-    exit(0);
+    return;
   }
 
   root_node = transformer(root_node);

@@ -49,24 +49,21 @@ int main(int argc, char **argv){
     input_buffer[offset] = '\0';
   }
 
-  if(!strlen(input_buffer)) {
-    fgets(input_buffer, MAX_INPUT_SIZE, stdin);
-    input_buffer[MAX_INPUT_SIZE - 1] = '\0';
+  if(strlen(input_buffer)) {
+    compiler(input_buffer, compiler_options);
+  } else {
+    while(fgets(input_buffer, MAX_INPUT_SIZE, stdin) != NULL){
+      compiler(input_buffer, compiler_options);
+    }
   }
 
-  if(!strlen(input_buffer)) {
-    display_help(stderr, argv[0]);
-    exit(-1);
-  }
-
-  compiler(input_buffer, compiler_options);
 }
 
 void display_help(FILE *fd, char *name) {
   fprintf(fd,
   "Usage: %s [OPTIONS] \"PROGRAM\"\n\n"
-  "MancCALC Simple Tokenizer, Parser, Traverser, Transformer,\n"
-  "Generator, Linker, Executor\n\n"
+  "MancCALC Simple Tokenizer, Parser, Traverser, Transformer, Generator,\n"
+  "Linker, Executor. If PROGRAM is not given it will expect input on stdin.\n\n"
   "\t-r\tRetain output source (don't auto-delete)\n"
   "\t-p\tPrint generated source to stdout, don't compile or execute!\n"
   "\t-v\tVerbose output (display tokens and AST)\n"
