@@ -1,23 +1,8 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
-char* generator(ast_node *, int *);
-char* generate(ast_node *);
-char* generate_program(ast_node *);
-char* generate_statement(ast_node *);
-char* generate_call(ast_node *);
-char* generate_number(ast_node *);
-char* generate_string(ast_node *);
-char* generate_operator(ast_node *);
-
-int append(char *, int *, char const *);
-
-#define FLAG_INCLUDE_ADD 1
-#define FLAG_INCLUDE_SUB 2
-#define FLAG_INCLUDE_MUL 4
-#define FLAG_INCLUDE_DIV 8
-
-#define FLAG_INCLUDE_STDIO 32
+#include "generator.h"
 
 int *include_flags;
 
@@ -225,11 +210,4 @@ char* generate_operator (ast_node *node) {
   free(param2);
 
   return output;
-}
-
-int append(char *dest, int *offset, char const *source) {
-  int size = strlen(source);
-  memcpy(&dest[*offset], source, size);
-  (*offset) += size;
-  return size;
 }

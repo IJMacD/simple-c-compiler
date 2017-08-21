@@ -1,6 +1,8 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-char* linker(char *, int);
+#include "linker.h"
 
 char* linker(char *program, int include_flags) {
 
@@ -10,16 +12,10 @@ char* linker(char *program, int include_flags) {
   static const char include_mul[] = "int multiply(int a, int b) { return a * b; }\n";
   static const char include_div[] = "int divide(int a, int b) { return a / b; }\n";
 
-  static const int include_stdio_len = sizeof(include_stdio) - 1;
-  static const int include_add_len = sizeof(include_add) - 1;
-  static const int include_sub_len = sizeof(include_sub) - 1;
-  static const int include_mul_len = sizeof(include_mul) - 1;
-  static const int include_div_len = sizeof(include_div) - 1;
-
   int output_len = strlen(program) + 1;
 
   if(include_flags & FLAG_INCLUDE_STDIO) {
-    output_len += include_stdio_len;
+    output_len += sizeof(include_stdio) - 1;
   }
 
   if(include_flags) {
@@ -27,19 +23,19 @@ char* linker(char *program, int include_flags) {
   }
 
   if(include_flags & FLAG_INCLUDE_ADD) {
-    output_len += include_add_len;
+    output_len += sizeof(include_add) - 1;
   }
 
   if(include_flags & FLAG_INCLUDE_SUB) {
-    output_len += include_sub_len;
+    output_len += sizeof(include_sub) - 1;
   }
 
   if(include_flags & FLAG_INCLUDE_MUL) {
-    output_len += include_mul_len;
+    output_len += sizeof(include_mul) - 1;
   }
 
   if(include_flags & FLAG_INCLUDE_DIV) {
-    output_len += include_div_len;
+    output_len += sizeof(include_div) - 1;
   }
 
   char *output = malloc(output_len);

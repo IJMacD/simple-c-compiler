@@ -1,13 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
 
-#define OPTION_RETAIN     1
-#define OPTION_PRINT      2
-#define OPTION_VERBOSE    4
-#define OPTION_TRANSFORM  8
-#define OPTION_EXECUTE   16
-
-void compiler(const char*, int);
-ast_node* operator_switcher(ast_node *, ast_node *);
+#include "compiler.h"
 
 void compiler(const char *input, int options) {
 

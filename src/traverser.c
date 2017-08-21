@@ -1,7 +1,6 @@
 #include <stdio.h>
 
-ast_node *traverser(ast_node *, ast_node *(*visitor) (ast_node *, ast_node *));
-ast_node *traverse_node(ast_node *, ast_node *, ast_node *(*visitor) (ast_node *, ast_node *));
+#include "traverser.h"
 
 /*    TRAVERSER   */
 ast_node *traverser(ast_node *node, ast_node *(*visitor) (ast_node *, ast_node *)) {

@@ -1,7 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
 
-void executor (ast_node *);
-int execute_node(ast_node *);
+#include "executor.h"
 
 void executor (ast_node *node) {
   execute_node(node);

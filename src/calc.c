@@ -1,17 +1,8 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#include "lexer.c"
-#include "parser.c"
-#include "traverser.c"
-#include "transformer.c"
-#include "generator.c"
-#include "linker.c"
-#include "executor.c"
-#include "compiler.c"
-
-#define MAX_INPUT_SIZE 1024
-
-void display_help(FILE *, char *);
+#include "calc.h"
 
 int main(int argc, char **argv){
   char input_buffer[MAX_INPUT_SIZE] = { 0 };
