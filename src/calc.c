@@ -32,6 +32,9 @@ int main(int argc, char **argv){
           case 'g':
             compiler_options |= OPTION_GRAPH;
             break;
+          case 'c':
+            compiler_options |= OPTION_COMPILE;
+            break;
           case 'h':
             display_help(stdout, argv[0]);
             exit(0);
@@ -52,6 +55,11 @@ int main(int argc, char **argv){
     input_buffer[offset] = '\0';
   }
 
+  if (!(compiler_options & OPTION_GRAPH) &&
+      !(compiler_options & OPTION_COMPILE)){
+    compiler_options |= OPTION_EXECUTE;
+  }
+
   if(strlen(input_buffer)) {
     compiler(input_buffer, compiler_options);
   } else {
@@ -68,11 +76,12 @@ void display_help(FILE *fd, char *name) {
   "MancCALC Simple Tokenizer, Parser, Traverser, Transformer, Generator,\n"
   "Linker, Executor. If PROGRAM is not given it will expect input on stdin.\n\n"
   "\t-r\tRetain output source (don't auto-delete)\n"
-  "\t-p\tPrint generated source to stdout, don't compile or execute!\n"
+  "\t-p\tPrint generated source to stdout (won't compile or output image file)\n"
   "\t-v\tVerbose output (display tokens and AST)\n"
   "\t-t\tTransform AST (to function based rather than operator based)\n"
-  "\t-x\tExecute the raw AST (don't generate, link or compile)\n"
-  "\t-g\tCreate a graph of the raw AST (don't generate, link or compile)\n"
+  "\t-x\tExecute the raw AST (default if -c or -g not provided)\n"
+  "\t-g\tCreate a graph of the raw AST (default creates image, with -p outputs source instead)\n"
+  "\t-c\tCompiles and executes AST transformed into C (with -p outputs source instead)\n"
   "\t-h\tDisplay this help text\n\n"
   "Example:\n"
   "\t%s -p \"add 5 subtract 4 2\"\n", name, name);

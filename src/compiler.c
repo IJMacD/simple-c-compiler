@@ -24,9 +24,6 @@ void compiler(const char *input, int options) {
 
   if(options & OPTION_EXECUTE) {
     executor(root_node);
-    free_tokens(tokens);
-    free_node(root_node);
-    return;
   }
 
   if(options & OPTION_GRAPH) {
@@ -46,10 +43,6 @@ void compiler(const char *input, int options) {
         remove("output.dot");
       }
     }
-
-    free_tokens(tokens);
-    free_node(root_node);
-    return;
   }
 
   root_node = transformer(root_node);
@@ -62,34 +55,38 @@ void compiler(const char *input, int options) {
     debug_node(root_node);
   }
 
-  int linker_flags = 0;
+  if (options & OPTION_COMPILE) {
 
-  char *program = generator(root_node, &linker_flags);
+    int linker_flags = 0;
 
-  char *output = linker(program, linker_flags);
+    char *program = generator(root_node, &linker_flags);
+
+    char *output = linker(program, linker_flags);
+
+    free(program);
+
+    if(options & OPTION_PRINT) {
+      fprintf(stdout, "%s\n", output);
+    }
+    else {
+      FILE *f = fopen("output.c", "w");
+      fprintf(f, "%s", output);
+      fclose(f);
+
+  #ifdef linux
+      system("clang output.c -o output && ./output && rm output");
+  #endif
+
+      if (!(options & OPTION_RETAIN)) {
+        remove("output.c");
+      }
+    }
+
+    free(output);
+  }
 
   free_tokens(tokens);
   free_node(root_node);
-  free(program);
-
-  if(options & OPTION_PRINT) {
-    fprintf(stdout, "%s\n", output);
-  }
-  else {
-    FILE *f = fopen("output.c", "w");
-    fprintf(f, "%s", output);
-    fclose(f);
-
-#ifdef linux
-    system("clang output.c -o output && ./output && rm output");
-#endif
-
-    if (!(options & OPTION_RETAIN)) {
-      remove("output.c");
-    }
-  }
-
-  free(output);
 }
 
 ast_node* operator_switcher(ast_node *node, ast_node *parent) {

@@ -13,6 +13,7 @@
 #define OPTION_TRANSFORM  8
 #define OPTION_EXECUTE   16
 #define OPTION_GRAPH     32
+#define OPTION_COMPILE   64
 
 void compiler(const char*, int);
 ast_node* operator_switcher(ast_node *, ast_node *);
