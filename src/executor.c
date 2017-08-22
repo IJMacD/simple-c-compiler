@@ -39,6 +39,10 @@ int execute_node (ast_node *node) {
         case '*':
           return a * b;
         case '/':
+          if (b == 0) {
+            fprintf(stderr, "Executor Error: Divide by zero\n");
+            exit(-1);
+          }
           return a / b;
       }
       return 0;
