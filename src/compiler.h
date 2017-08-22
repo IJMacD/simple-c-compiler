@@ -6,6 +6,7 @@
 #include "linker.h"
 #include "executor.h"
 #include "grapher.h"
+#include "randomiser.h"
 
 #define OPTION_RETAIN     1
 #define OPTION_PRINT      2
@@ -14,6 +15,7 @@
 #define OPTION_EXECUTE   16
 #define OPTION_GRAPH     32
 #define OPTION_COMPILE   64
+#define OPTION_RANDOM   128
 
 void compiler(const char*, int);
 ast_node* operator_switcher(ast_node *, ast_node *);

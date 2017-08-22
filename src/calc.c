@@ -1,12 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "calc.h"
 
 int main(int argc, char **argv){
   char input_buffer[MAX_INPUT_SIZE] = { 0 };
   int compiler_options = 0;
+
+#ifdef linux
+#include <unistd.h>
+  srand(time(NULL) * getpid());
+#else
+  srand(time(NULL));
+#endif
 
   if(argc > 1) {
     int i;
@@ -35,6 +43,9 @@ int main(int argc, char **argv){
           case 'c':
             compiler_options |= OPTION_COMPILE;
             break;
+          case 'u':
+            compiler_options |= OPTION_RANDOM;
+            break;
           case 'h':
             display_help(stdout, argv[0]);
             exit(0);
@@ -60,7 +71,9 @@ int main(int argc, char **argv){
     compiler_options |= OPTION_EXECUTE;
   }
 
-  if(strlen(input_buffer)) {
+  if(compiler_options & OPTION_RANDOM) {
+    compiler(NULL, compiler_options);
+  } else if(strlen(input_buffer)) {
     compiler(input_buffer, compiler_options);
   } else {
     while(fgets(input_buffer, MAX_INPUT_SIZE, stdin) != NULL){
@@ -89,6 +102,7 @@ void display_help(FILE *fd, char *name) {
   "\t\t(default creates image, with -p outputs source instead)\n"
   "\t-c\tCompiles and executes AST transformed into C\n"
   "\t\t(with -p outputs source instead)\n"
+  "\t-u\tIgnore all input and generate a random AST\n"
   "\t-h\tDisplay this help text\n\n"
   "Example:\n"
   "\t%s -p \"add 5 subtract 4 2\"\n", name, name);

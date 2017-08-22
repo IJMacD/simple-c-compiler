@@ -5,18 +5,26 @@
 
 void compiler(const char *input, int options) {
 
-  token_list *tokens = lexer(input);
+  ast_node *root_node;
+  token_list *tokens;
 
-  if (options & OPTION_VERBOSE) {
-    fprintf(stderr, "%d tokens found\n", tokens->length);
-
-    int i;
-    for(i = 0; i < tokens->length; i++) {
-      fprintf(stderr, "%s\n", tokens->list[i].value);
-    }
+  if(options & OPTION_RANDOM) {
+    root_node = randomiser();
   }
+  else {
+    tokens = lexer(input);
 
-  ast_node *root_node = parser(tokens);
+    if (options & OPTION_VERBOSE) {
+      fprintf(stderr, "%d tokens found\n", tokens->length);
+
+      int i;
+      for(i = 0; i < tokens->length; i++) {
+        fprintf(stderr, "%s\n", tokens->list[i].value);
+      }
+    }
+
+    root_node = parser(tokens);
+  }
 
   if (options & OPTION_VERBOSE) {
     debug_node(root_node);
@@ -45,17 +53,17 @@ void compiler(const char *input, int options) {
     }
   }
 
-  root_node = transformer(root_node);
-
-  if (options & OPTION_TRANSFORM) {
-    root_node = traverser(root_node, operator_switcher);
-  }
-
-  if (options & OPTION_VERBOSE) {
-    debug_node(root_node);
-  }
-
   if (options & OPTION_COMPILE) {
+
+    root_node = transformer(root_node);
+
+    if (options & OPTION_TRANSFORM) {
+      root_node = traverser(root_node, operator_switcher);
+    }
+
+    if (options & OPTION_VERBOSE) {
+      debug_node(root_node);
+    }
 
     int linker_flags = 0;
 
@@ -85,7 +93,9 @@ void compiler(const char *input, int options) {
     free(output);
   }
 
-  free_tokens(tokens);
+  if(tokens != NULL) {
+    free_tokens(tokens);
+  }
   free_node(root_node);
 }
 
