@@ -29,6 +29,9 @@ int main(int argc, char **argv){
           case 'x':
             compiler_options |= OPTION_EXECUTE;
             break;
+          case 'g':
+            compiler_options |= OPTION_GRAPH;
+            break;
           case 'h':
             display_help(stdout, argv[0]);
             exit(0);
@@ -69,6 +72,7 @@ void display_help(FILE *fd, char *name) {
   "\t-v\tVerbose output (display tokens and AST)\n"
   "\t-t\tTransform AST (to function based rather than operator based)\n"
   "\t-x\tExecute the raw AST (don't generate, link or compile)\n"
+  "\t-g\tCreate a graph of the raw AST (don't generate, link or compile)\n"
   "\t-h\tDisplay this help text\n\n"
   "Example:\n"
   "\t%s -p \"add 5 subtract 4 2\"\n", name, name);

@@ -23,7 +23,14 @@ void compiler(const char *input, int options) {
   }
 
   if(options & OPTION_EXECUTE) {
-    execute_node(root_node);
+    executor(root_node);
+    free_tokens(tokens);
+    free_node(root_node);
+    return;
+  }
+
+  if(options & OPTION_GRAPH) {
+    grapher(root_node);
     free_tokens(tokens);
     free_node(root_node);
     return;
