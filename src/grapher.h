@@ -4,5 +4,5 @@
 #include "traverser.h"
 #include "util.h"
 
-void grapher(ast_node *);
-void graph_node(ast_node *node, char *);
+void grapher(ast_node *, FILE *);
+void graph_node(ast_node *node, char *, FILE *);

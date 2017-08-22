@@ -30,7 +30,23 @@ void compiler(const char *input, int options) {
   }
 
   if(options & OPTION_GRAPH) {
-    grapher(root_node);
+    if (options & OPTION_PRINT) {
+      grapher(root_node, stdout);
+    }
+    else {
+      FILE *fd = fopen("output.dot", "w");
+      grapher(root_node, fd);
+      fclose(fd);
+
+  #ifdef linux
+      system("dot -Tpng -ooutput.png output.dot");
+  #endif
+
+      if (!(options & OPTION_RETAIN)) {
+        remove("output.dot");
+      }
+    }
+
     free_tokens(tokens);
     free_node(root_node);
     return;
@@ -57,7 +73,7 @@ void compiler(const char *input, int options) {
   free(program);
 
   if(options & OPTION_PRINT) {
-    printf("%s\n", output);
+    fprintf(stdout, "%s\n", output);
   }
   else {
     FILE *f = fopen("output.c", "w");
