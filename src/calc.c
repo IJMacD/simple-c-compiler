@@ -64,6 +64,10 @@ int main(int argc, char **argv){
     compiler(input_buffer, compiler_options);
   } else {
     while(fgets(input_buffer, MAX_INPUT_SIZE, stdin) != NULL){
+      if(input_buffer[0] == '\n') {
+        display_help(stderr, argv[0]);
+        exit(-1);
+      }
       compiler(input_buffer, compiler_options);
     }
   }
@@ -76,12 +80,15 @@ void display_help(FILE *fd, char *name) {
   "MancCALC Simple Tokenizer, Parser, Traverser, Transformer, Generator,\n"
   "Linker, Executor. If PROGRAM is not given it will expect input on stdin.\n\n"
   "\t-r\tRetain output source (don't auto-delete)\n"
-  "\t-p\tPrint generated source to stdout (won't compile or output image file)\n"
+  "\t-p\tPrint generated source to stdout\n"
+  "\t\t(won't compile or output image file)\n"
   "\t-v\tVerbose output (display tokens and AST)\n"
   "\t-t\tTransform AST (to function based rather than operator based)\n"
   "\t-x\tExecute the raw AST (default if -c or -g not provided)\n"
-  "\t-g\tCreate a graph of the raw AST (default creates image, with -p outputs source instead)\n"
-  "\t-c\tCompiles and executes AST transformed into C (with -p outputs source instead)\n"
+  "\t-g\tCreate a graph of the raw AST\n"
+  "\t\t(default creates image, with -p outputs source instead)\n"
+  "\t-c\tCompiles and executes AST transformed into C\n"
+  "\t\t(with -p outputs source instead)\n"
   "\t-h\tDisplay this help text\n\n"
   "Example:\n"
   "\t%s -p \"add 5 subtract 4 2\"\n", name, name);
