@@ -31,11 +31,11 @@ void compiler(const char *input, int options) {
 
   if(options & OPTION_GRAPH) {
     if (options & OPTION_PRINT) {
-      grapher(root_node, stdout);
+      grapher(stdout, root_node);
     }
     else {
       FILE *fd = fopen("output.dot", "w");
-      grapher(root_node, fd);
+      grapher(fd, root_node);
       fclose(fd);
 
   #ifdef linux
