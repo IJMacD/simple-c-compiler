@@ -15,7 +15,7 @@ ast_node* parser(token_list *tokens) {
   root_node->body_length = 1;
 
   if(index < tokens->length - 1){
-    fprintf(stderr, "Parsing Error: Too many tokens.\n");
+    fprintf(stderr, "Parsing Error: Excess tokens provided.\n");
     exit(-1);
   }
 
