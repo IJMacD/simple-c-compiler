@@ -35,10 +35,7 @@ ast_node *visitor(ast_node *node, ast_node *parent) {
     statement_node->body[0] = print_node;
     statement_node->body_length = 1;
 
-    // TODO: We just assume we're working on the first statement of the program
-    parent->body[0] = statement_node;
-
-    return print_node;
+    return statement_node;
   }
   else if (node->type == NODE_OPERATOR && node->string_val[0] == '!') {
     node->type = NODE_CALL;
