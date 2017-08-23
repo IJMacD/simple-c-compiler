@@ -48,6 +48,25 @@ ast_node* walk(int *index, token_list *tokens) {
       node->type = NODE_NUMBER;
       node->int_val = atoi(current.value);
 
+      if(*index + 1 < tokens->length) {
+        token next = tokens->list[*index + 1];
+
+        if(next.type == TOKEN_OPERATOR &&
+            next.value[0] == '!' ){
+
+          ast_node *fac = malloc(sizeof(ast_node));
+
+          fac->type = NODE_OPERATOR;
+          fac->string_val = next.value;
+          fac->param1 = node;
+          fac->param2 = NULL;
+
+          (*index)++;
+
+          return fac;
+        }
+      }
+
       return node;
     }
 
@@ -96,11 +115,11 @@ void free_node(ast_node *node) {
       free_node(node->body[0]);
     }
   } else if(node->type == NODE_CALL) {
-    free_node(node->param1);
-    free_node(node->param2);
+    if(node->param1 != NULL) free_node(node->param1);
+    if(node->param2 != NULL) free_node(node->param2);
   } else if(node->type == NODE_OPERATOR) {
-    free_node(node->param1);
-    free_node(node->param2);
+    if(node->param1 != NULL) free_node(node->param1);
+    if(node->param2 != NULL) free_node(node->param2);
   }
   free(node);
 }

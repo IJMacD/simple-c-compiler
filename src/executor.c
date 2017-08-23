@@ -25,12 +25,21 @@ int execute_node (ast_node *node) {
         fprintf(stderr, "Executor Error: `%s` Missing first operand.\n", node->string_val);
         exit(-1);
       }
+      a = execute_node(node->param1);
+
+      if (node->string_val[0] == '!') {
+        if (a <= 0) return 1;
+        b = 1;
+        for(i = 1; i <= a; i++) b *= i;
+        return b;
+      }
+
       if(node->param2 == NULL) {
         fprintf(stderr, "Executor Error: `%s` Missing second operand.\n", node->string_val);
         exit(-1);
       }
-      a = execute_node(node->param1);
       b = execute_node(node->param2);
+
       switch(node->string_val[0]) {
         case '+':
           return a + b;

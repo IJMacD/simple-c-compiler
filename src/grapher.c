@@ -34,8 +34,10 @@ void graph_node (ast_node *node, char *parent_id, int *operator_count, int *numb
 
             (*operator_count)++;
 
-            graph_node(node->param1, tmp_buff, operator_count, number_count, output);
-            graph_node(node->param2, tmp_buff, operator_count, number_count, output);
+            if (node->param1 != NULL)
+                graph_node(node->param1, tmp_buff, operator_count, number_count, output);
+            if (node->param2 != NULL)
+                graph_node(node->param2, tmp_buff, operator_count, number_count, output);
             break;
         case NODE_NUMBER:
             fprintf(output, "\tN%d [label=%d]\n", *number_count, node->int_val);

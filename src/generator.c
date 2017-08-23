@@ -111,21 +111,28 @@ char* generate_statement(ast_node *node) {
 }
 
 char* generate_call (ast_node *node) {
+  int name_len, param1_len = 0, param2_len = 0;
+  char *param1 = NULL, *param2 = NULL;
+
+  name_len = strlen(node->string_val);
+
   if(node->param1 == NULL) {
     fprintf(stderr, "Generator Error: `%s` Missing first paramater.\n", node->string_val);
     exit(-1);
   }
-  char *param1 = generate(node->param1);
+  param1 = generate(node->param1);
+  param1_len = strlen(param1);
 
   if(node->param2 == NULL) {
-    fprintf(stderr, "Generator Error: `%s` Missing second paramater.\n", node->string_val);
-    exit(-1);
+    if (strcmp(node->string_val, "factorial")) {
+      fprintf(stderr, "Generator Error: `%s` Missing second paramater.\n", node->string_val);
+      exit(-1);
+    }
+  } else {
+    param2 = generate(node->param2);
+    param2_len = strlen(param2);
   }
-  char *param2 = generate(node->param2);
 
-  int name_len = strlen(node->string_val);
-  int param1_len = strlen(param1);
-  int param2_len = strlen(param2);
 
   if(!strcmp("add", node->string_val)){
     *include_flags |= FLAG_INCLUDE_ADD;
@@ -135,6 +142,8 @@ char* generate_call (ast_node *node) {
     *include_flags |= FLAG_INCLUDE_MUL;
   } else if (!strcmp("divide", node->string_val)) {
     *include_flags |= FLAG_INCLUDE_DIV;
+  } else if (!strcmp("factorial", node->string_val)) {
+    *include_flags |= FLAG_INCLUDE_FAC;
   } else if (!strcmp("printf", node->string_val)) {
     *include_flags |= FLAG_INCLUDE_STDIO;
   } else {
@@ -148,14 +157,16 @@ char* generate_call (ast_node *node) {
   append(output, &offset, node->string_val);
   output[offset++] = '(';
   append(output, &offset, param1);
-  output[offset++] = ',';
-  output[offset++] = ' ';
-  append(output, &offset, param2);
+  if(param2_len) {
+    output[offset++] = ',';
+    output[offset++] = ' ';
+    append(output, &offset, param2);
+  }
   output[offset++] = ')';
   output[offset++] = '\0';
 
-  free(param1);
-  free(param2);
+  if(param1 != NULL) free(param1);
+  if(param2 != NULL) free(param2);
 
   return output;
 }
@@ -184,6 +195,11 @@ char* generate_operator (ast_node *node) {
     exit(-1);
   }
   char *param1 = generate(node->param1);
+
+  if (node->string_val[0] == '!') {
+    fprintf(stderr, "Generator Error: Target has no `%s` operator.\n", node->string_val);
+    exit(-1);
+  }
 
   if(node->param2 == NULL) {
     fprintf(stderr, "Generator Error: `%s` Missing second operand.\n", node->string_val);

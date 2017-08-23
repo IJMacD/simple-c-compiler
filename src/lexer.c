@@ -92,7 +92,8 @@ token_list* lexer(const char *source) {
       continue;
     }
 
-    if (c == '+' || c == '-' || c == '*' || c == '/') {
+    if (c == '+' || c == '-' || c == '*' || c == '/' ||
+        c == '!') {
       token *t = &tokens->list[tokens->length++];
 
       t->type = TOKEN_OPERATOR;

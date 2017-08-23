@@ -11,6 +11,7 @@ char* linker(char *program, int include_flags) {
   static const char include_sub[] = "int subtract(int a, int b) { return a - b; }\n";
   static const char include_mul[] = "int multiply(int a, int b) { return a * b; }\n";
   static const char include_div[] = "int divide(int a, int b) { return a / b; }\n";
+  static const char include_fac[] = "int factorial(int a) { if (a <= 0) return 1; int i, b = 1; for(i = 1; i <= a; i++) b *= i; return b; }\n";
 
   int output_len = strlen(program) + 1;
 
@@ -38,6 +39,10 @@ char* linker(char *program, int include_flags) {
     output_len += sizeof(include_div) - 1;
   }
 
+  if(include_flags & FLAG_INCLUDE_FAC) {
+    output_len += sizeof(include_fac) - 1;
+  }
+
   char *output = malloc(output_len);
   int offset = 0;
 
@@ -59,6 +64,10 @@ char* linker(char *program, int include_flags) {
 
   if(include_flags & FLAG_INCLUDE_DIV) {
     append(output, &offset, include_div);
+  }
+
+  if(include_flags & FLAG_INCLUDE_FAC) {
+    append(output, &offset, include_fac);
   }
 
   if(include_flags) {
