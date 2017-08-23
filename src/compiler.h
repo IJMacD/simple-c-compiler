@@ -7,6 +7,7 @@
 #include "executor.h"
 #include "grapher.h"
 #include "randomiser.h"
+#include "runner.h"
 
 #define OPTION_RETAIN     1
 #define OPTION_PRINT      2

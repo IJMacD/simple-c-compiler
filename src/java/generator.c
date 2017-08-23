@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "generator.h"
+#include "../generator.h"
 
 int *include_flags;
 
@@ -47,8 +47,8 @@ char* generate(ast_node *node) {
 }
 
 char* generate_program(ast_node *node) {
-  static const char head[] = "int main(){\n";
-  static const char tail[] = "}\n";
+  static const char head[] = "class Program {\n\tpublic static void main(String[] args){\n";
+  static const char tail[] = "\t}\n}\n";
 
   static const int head_len = sizeof(head) - 1;
   static const int tail_len = sizeof(tail) - 1;
@@ -65,6 +65,7 @@ char* generate_program(ast_node *node) {
         fprintf(stderr, "Generator Error: Not enough space reserved for body.");
         exit(-1);
       }
+      body[offset++] = '\t';
       body[offset++] = '\t';
       append(body, &offset, child);
       free(child);
@@ -131,24 +132,6 @@ char* generate_call (ast_node *node) {
   } else {
     param2 = generate(node->param2);
     param2_len = strlen(param2);
-  }
-
-
-  if(!strcmp("add", node->string_val)){
-    *include_flags |= FLAG_INCLUDE_ADD;
-  } else if (!strcmp("subtract", node->string_val)) {
-    *include_flags |= FLAG_INCLUDE_SUB;
-  } else if (!strcmp("multiply", node->string_val)) {
-    *include_flags |= FLAG_INCLUDE_MUL;
-  } else if (!strcmp("divide", node->string_val)) {
-    *include_flags |= FLAG_INCLUDE_DIV;
-  } else if (!strcmp("factorial", node->string_val)) {
-    *include_flags |= FLAG_INCLUDE_FAC;
-  } else if (!strcmp("printf", node->string_val)) {
-    *include_flags |= FLAG_INCLUDE_STDIO;
-  } else {
-    fprintf(stderr, "Generator Error: Unrecognised call target `%s`.\n", node->string_val);
-    exit(1);
   }
 
   char *output = malloc(name_len + param1_len + param2_len + 5);

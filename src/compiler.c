@@ -77,17 +77,7 @@ void compiler(const char *input, int options) {
       fprintf(stdout, "%s\n", output);
     }
     else {
-      FILE *f = fopen("output.c", "w");
-      fprintf(f, "%s", output);
-      fclose(f);
-
-  #ifdef linux
-      system("clang output.c -o output && ./output && rm output");
-  #endif
-
-      if (!(options & OPTION_RETAIN)) {
-        remove("output.c");
-      }
+      runner(output, options & OPTION_RETAIN);
     }
 
     free(output);
