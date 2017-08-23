@@ -44,7 +44,8 @@ token_list* lexer(const char *source) {
     }
 
 
-    if(c >= '0' && c <= '9') {
+    if((c >= '0' && c <= '9') ||
+    (c == '-' && source[index+1] >= '0' && source[index+1] <= '9')) {
       token *t = &tokens->list[tokens->length++];
 
       t->type = TOKEN_NUMBER;

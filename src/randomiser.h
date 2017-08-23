@@ -2,7 +2,7 @@
 
 #include "parser.h"
 
-#define RANDOMISER_NUM_MIN      1
+#define RANDOMISER_NUM_MIN   -100
 #define RANDOMISER_NUM_MAX    100
 #define RANDOMISER_NODE_COUNT 100
 
