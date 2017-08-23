@@ -48,25 +48,6 @@ ast_node* walk(int *index, token_list *tokens) {
       node->type = NODE_NUMBER;
       node->int_val = atoi(current.value);
 
-      if(*index + 1 < tokens->length) {
-        token next = tokens->list[*index + 1];
-
-        if(next.type == TOKEN_OPERATOR &&
-            next.value[0] == '!' ){
-
-          ast_node *fac = malloc(sizeof(ast_node));
-
-          fac->type = NODE_OPERATOR;
-          fac->string_val = next.value;
-          fac->param1 = node;
-          fac->param2 = NULL;
-
-          (*index)++;
-
-          return fac;
-        }
-      }
-
       return node;
     }
 
@@ -87,9 +68,13 @@ ast_node* walk(int *index, token_list *tokens) {
 
       node->param1 = walk(index, tokens);
 
-      (*index)++;
+      if(current.value[0] != '!') {
+        (*index)++;
 
-      node->param2 = walk(index, tokens);
+        node->param2 = walk(index, tokens);
+      } else {
+        node->param2 = NULL;
+      }
 
       return node;
     }
