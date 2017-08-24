@@ -6,37 +6,13 @@
 
 char* linker(char *program, int include_flags) {
 
-  static const char include_stdio[] = "#include <stdio.h>\n";
-  static const char include_add[] = "int add(int a, int b) { return a + b; }\n";
-  static const char include_sub[] = "int subtract(int a, int b) { return a - b; }\n";
-  static const char include_mul[] = "int multiply(int a, int b) { return a * b; }\n";
-  static const char include_div[] = "int divide(int a, int b) { return a / b; }\n";
-  static const char include_fac[] = "int factorial(int a) { if (a <= 0) return 1; int i, b = 1; for(i = 1; i <= a; i++) b *= i; return b; }\n";
+  static const char head[] = "class Stdlib {\n";
+  static const char include_fac[] = "\tpublic static int factorial(int a){int b=1;for(;a>0;a--)b*=a;return b;}\n";
 
-  int output_len = strlen(program) + 1;
-
-  if(include_flags & FLAG_INCLUDE_STDIO) {
-    output_len += sizeof(include_stdio) - 1;
-  }
+  int output_len = strlen(program) + sizeof(head) + 1;
 
   if(include_flags) {
     output_len += 1; // One additional '\n'
-  }
-
-  if(include_flags & FLAG_INCLUDE_ADD) {
-    output_len += sizeof(include_add) - 1;
-  }
-
-  if(include_flags & FLAG_INCLUDE_SUB) {
-    output_len += sizeof(include_sub) - 1;
-  }
-
-  if(include_flags & FLAG_INCLUDE_MUL) {
-    output_len += sizeof(include_mul) - 1;
-  }
-
-  if(include_flags & FLAG_INCLUDE_DIV) {
-    output_len += sizeof(include_div) - 1;
   }
 
   if(include_flags & FLAG_INCLUDE_FAC) {
@@ -46,24 +22,12 @@ char* linker(char *program, int include_flags) {
   char *output = malloc(output_len);
   int offset = 0;
 
-  if(include_flags & FLAG_INCLUDE_STDIO) {
-    append(output, &offset, include_stdio);
-  }
 
-  if(include_flags & FLAG_INCLUDE_ADD) {
-    append(output, &offset, include_add);
-  }
+  append(output, &offset, program);
 
-  if(include_flags & FLAG_INCLUDE_SUB) {
-    append(output, &offset, include_sub);
-  }
-
-  if(include_flags & FLAG_INCLUDE_MUL) {
-    append(output, &offset, include_mul);
-  }
-
-  if(include_flags & FLAG_INCLUDE_DIV) {
-    append(output, &offset, include_div);
+  if(include_flags) {
+    output[offset++] = '\n';
+    append(output, &offset, head);
   }
 
   if(include_flags & FLAG_INCLUDE_FAC) {
@@ -71,12 +35,11 @@ char* linker(char *program, int include_flags) {
   }
 
   if(include_flags) {
+    output[offset++] = '}';
     output[offset++] = '\n';
   }
 
-  append(output, &offset, program);
-
-  output[offset] = '\0';
+  output[offset++] = '\0';
 
   return output;
 }

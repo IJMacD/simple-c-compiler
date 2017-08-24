@@ -39,7 +39,7 @@ ast_node *visitor(ast_node *node, ast_node *parent) {
   }
   else if (node->type == NODE_OPERATOR && node->string_val[0] == '!') {
     node->type = NODE_CALL;
-    char const name[] = "factorial";
+    char const name[] = "Stdlib.factorial";
     node->string_val = malloc(sizeof(name));
     strcpy(node->string_val, name);
     return node;
