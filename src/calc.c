@@ -20,7 +20,7 @@ int main(int argc, char **argv){
     int i;
     int offset = 0;
     for(i = 1; i < argc; i++) {
-      if(argv[i][0] == '-' && argv[i][1] != '\0') {
+      if(argv[i][0] == '-' && argv[i][1] != '\0' && argv[i][1] != ' ') {
         switch(argv[i][1]) {
           case 'r':
             compiler_options |= OPTION_RETAIN;
@@ -76,12 +76,16 @@ int main(int argc, char **argv){
   } else if(strlen(input_buffer)) {
     compiler(input_buffer, compiler_options);
   } else {
+    int input_count = 0;
     while(fgets(input_buffer, MAX_INPUT_SIZE, stdin) != NULL){
       if(input_buffer[0] == '\n') {
-        display_help(stderr, argv[0]);
+        if(input_count == 0) {
+          display_help(stderr, argv[0]);
+        }
         exit(-1);
       }
       compiler(input_buffer, compiler_options);
+      input_count++;
     }
   }
 
