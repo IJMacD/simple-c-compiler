@@ -7,7 +7,7 @@ void runner(const char *output, int retain) {
   fclose(f);
 
 #ifdef linux
-  system("clang output.c -o output && ./output && rm output");
+  system("clang output.c -lm -o output && ./output && rm output");
 #endif
 
   if (!(retain)) {

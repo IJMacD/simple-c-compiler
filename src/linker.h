@@ -8,5 +8,6 @@
 #define FLAG_INCLUDE_POWER 32
 
 #define FLAG_INCLUDE_STDIO 256
+#define FLAG_INCLUDE_MATH 512
 
 char* linker(char *, int);
