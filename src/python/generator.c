@@ -42,6 +42,10 @@ char* generate(ast_node *node) {
     return generate_operator(node);
   }
 
+  if(node->type == NODE_CAST) {
+    return generate(node->param1);
+  }
+
   fprintf(stderr, "Generator Error: Unrecognised Node Type: %d\n", node->type);
   exit(-1);
 }

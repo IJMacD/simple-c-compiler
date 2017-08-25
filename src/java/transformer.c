@@ -33,10 +33,19 @@ ast_node *visitor(ast_node *node, ast_node *parent) {
   }
   else if (node->type == NODE_OPERATOR && node->string_val[0] == '^') {
     node->type = NODE_CALL;
-    char const name[] = "(int)Math.pow";
+    char const name[] = "Math.pow";
     node->string_val = malloc(sizeof(name));
     strcpy(node->string_val, name);
-    return node;
+
+    ast_node *node_cast = malloc(sizeof(ast_node));
+    node_cast->type = NODE_CAST;
+    char const type_name[] = "int";
+    node_cast->string_val = malloc(sizeof(type_name));
+    strcpy(node_cast->string_val, type_name);
+    node_cast->param1 = node;
+    node_cast->param2 = NULL;
+
+    return node_cast;
   }
   else if (node->type == NODE_OPERATOR && node->string_val[0] == '!') {
     node->type = NODE_CALL;

@@ -42,6 +42,10 @@ char* generate(ast_node *node) {
     return generate_operator(node);
   }
 
+  if(node->type == NODE_CAST) {
+    return generate_cast(node);
+  }
+
   fprintf(stderr, "Generator Error: Unrecognised Node Type: %d\n", node->type);
   exit(-1);
 }
@@ -206,6 +210,31 @@ char* generate_operator (ast_node *node) {
 
   free(param1);
   free(param2);
+
+  return output;
+}
+
+char* generate_cast (ast_node *node) {
+  if(node->param1 == NULL) {
+    fprintf(stderr, "Generator Error: Cast to %s missing operand.\n", node->string_val);
+    exit(-1);
+  }
+  char *param1 = generate(node->param1);
+
+  int type_len = strlen(node->string_val);
+
+  int param1_len = strlen(param1);
+
+  char *output = malloc(type_len + param1_len + 3);
+  int offset = 0;
+
+  output[offset++] = '(';
+  append(output, &offset, node->string_val);
+  output[offset++] = ')';
+  append(output, &offset, param1);
+  output[offset++] = '\0';
+
+  free(param1);
 
   return output;
 }

@@ -9,6 +9,7 @@
 #define NODE_STRING 4
 #define NODE_OPERATOR 5
 #define NODE_STATEMENT 6
+#define NODE_CAST 7
 
 typedef struct ast_node_struct {
   int type;

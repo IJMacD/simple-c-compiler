@@ -10,35 +10,30 @@ ast_node *traverser(ast_node *node, ast_node *(*visitor) (ast_node *, ast_node *
 
 void traverse_node(ast_node **node, ast_node *parent, ast_node *(*visitor) (ast_node *, ast_node *)) {
 
-  ast_node *new_node = visitor(*node, parent);
+  *node = visitor(*node, parent);
 
-  if(new_node->type == NODE_PROGRAM) {
+  if ((*node)->type != NODE_NUMBER &&
+    (*node)->type != NODE_STRING
+  ) {
+    // Conditional jump or move depends on unitialised value(s)
+    // param1 and param2 might not have been initialised to NULL
+    // they almost certainly haven't for number and string constants
+    if((*node)->param1 != NULL)
+      traverse_node(&(*node)->param1, *node, visitor);
+    if((*node)->param2 != NULL)
+      traverse_node(&(*node)->param2, *node, visitor);
+  }
+
+
+  if ((*node)->type != NODE_PROGRAM ||
+    (*node)->type != NODE_STATEMENT
+  ) {
+    // Conditional jump or move depends on unitialised value(s)
+    // body_length might not have been initialised to 0
     int i;
-    for (i = 0; i < new_node->body_length; i++) {
-      if(new_node->body[i] != NULL)
-        traverse_node(&new_node->body[i], new_node, visitor);
+    for (i = 0; i < (*node)->body_length; i++) {
+      if((*node)->body[i] != NULL)
+        traverse_node(&(*node)->body[i], *node, visitor);
     }
   }
-  else if(new_node->type == NODE_STATEMENT) {
-    if(new_node->body[0] != NULL)
-      traverse_node(&new_node->body[0], new_node, visitor);
-  }
-  else if(new_node->type == NODE_CALL) {
-    if(new_node->param1 != NULL)
-      traverse_node(&new_node->param1, new_node, visitor);
-    if(new_node->param2 != NULL)
-      traverse_node(&new_node->param2, new_node, visitor);
-  }
-  else if (new_node->type == NODE_NUMBER) {
-  }
-  else if (new_node->type == NODE_STRING) {
-  }
-  else if(new_node->type == NODE_OPERATOR) {
-    if(new_node->param1 != NULL)
-      traverse_node(&new_node->param1, new_node, visitor);
-    if(new_node->param2 != NULL)
-      traverse_node(&new_node->param2, new_node, visitor);
-  }
-
-  *node = new_node;
 }

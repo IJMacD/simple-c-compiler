@@ -87,6 +87,7 @@ ast_node* walk(int *index, token_list *tokens) {
 }
 
 void free_node(ast_node *node) {
+
   if(node->type == NODE_PROGRAM) {
     int i;
     for(i = 0; i < node->body_length; i++) {
@@ -99,10 +100,10 @@ void free_node(ast_node *node) {
     if (node->body[0] != NULL) {
       free_node(node->body[0]);
     }
-  } else if(node->type == NODE_CALL) {
-    if(node->param1 != NULL) free_node(node->param1);
-    if(node->param2 != NULL) free_node(node->param2);
-  } else if(node->type == NODE_OPERATOR) {
+  } else if(node->type == NODE_CALL ||
+    node->type == NODE_OPERATOR ||
+    node->type == NODE_CAST
+  ) {
     if(node->param1 != NULL) free_node(node->param1);
     if(node->param2 != NULL) free_node(node->param2);
   }
@@ -149,6 +150,11 @@ void debug_node_val(ast_node *node, int depth) {
       debug_node_val(node->param1, depth + 1);
     if(node->param2 != NULL)
       debug_node_val(node->param2, depth + 1);
+  }
+  else if(node->type == NODE_CAST) {
+    fprintf(stderr, "%sCast: %s\n", prefix, node->string_val);
+    if(node->param1 != NULL)
+      debug_node_val(node->param1, depth + 1);
   }
   else {
     if(node->body[0] != NULL)

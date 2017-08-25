@@ -10,3 +10,4 @@ char* generate_call(ast_node *);
 char* generate_number(ast_node *);
 char* generate_string(ast_node *);
 char* generate_operator(ast_node *);
+char* generate_cast(ast_node *);

@@ -3,12 +3,12 @@ mkdir -p build && cd build || (echo "Error creating directory" >&2 && exit -1)
 
 rm *.o
 clang -c ../src/*.c ../src/c/*.c
-clang *.o -o calc
+clang -lm *.o -o calc
 
 rm *.o
 clang -c ../src/*.c ../src/java/*.c
-clang *.o -o calc-java
+clang -lm *.o -o calc-java
 
 rm *.o
 clang -c ../src/*.c ../src/python/*.c
-clang *.o -o calc-python
+clang -lm *.o -o calc-python
