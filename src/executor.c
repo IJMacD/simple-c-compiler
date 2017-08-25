@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "executor.h"
 
@@ -53,6 +54,8 @@ int execute_node (ast_node *node) {
             exit(-1);
           }
           return a / b;
+        case '^':
+          return pow(a, b);
       }
       return 0;
     case NODE_NUMBER:

@@ -144,6 +144,8 @@ char* generate_call (ast_node *node) {
     *include_flags |= FLAG_INCLUDE_DIV;
   } else if (!strcmp("factorial", node->string_val)) {
     *include_flags |= FLAG_INCLUDE_FAC;
+  } else if (!strcmp("power", node->string_val)) {
+    *include_flags |= FLAG_INCLUDE_POWER;
   } else if (!strcmp("printf", node->string_val)) {
     *include_flags |= FLAG_INCLUDE_STDIO;
   } else {

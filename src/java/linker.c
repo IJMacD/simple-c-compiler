@@ -7,7 +7,7 @@
 char* linker(char *program, int include_flags) {
 
   static const char head[] = "class Stdlib {\n";
-  static const char include_fac[] = "\tpublic static int factorial(int a){int b=1;for(;a>0;a--)b*=a;return b;}\n";
+  static const char include_fac[] = "\tpublic static int factorial(int a){int b=1;while(a>0)b*=a--;return b;}\n";
 
   int output_len = strlen(program) + sizeof(head) + 1;
 

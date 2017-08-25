@@ -119,6 +119,10 @@ char* generate_call (ast_node *node) {
     param2_len = strlen(param2);
   }
 
+  if (!strcmp("factorial", node->string_val)) {
+    *include_flags |= FLAG_INCLUDE_FAC;
+  }
+
   char *output = malloc(name_len + param1_len + param2_len + 5);
   int offset = 0;
 

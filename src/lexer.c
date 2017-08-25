@@ -44,8 +44,7 @@ token_list* lexer(const char *source) {
     }
 
 
-    if((c >= '0' && c <= '9') ||
-    (c == '-' && source[index+1] >= '0' && source[index+1] <= '9')) {
+    if(isdigit(c) || (c == '-' && isdigit(source[index+1]))) {
       token *t = &tokens->list[tokens->length++];
 
       t->type = TOKEN_NUMBER;
@@ -55,7 +54,7 @@ token_list* lexer(const char *source) {
 
       index++;
 
-      while(source[index] >= '0' && source[index] <= '9' && index < len) {
+      while(isdigit(source[index]) && index < len) {
         index++;
         count++;
       }
@@ -93,7 +92,7 @@ token_list* lexer(const char *source) {
     }
 
     if (c == '+' || c == '-' || c == '*' || c == '/' ||
-        c == '!') {
+        c == '!' || c == '^') {
       token *t = &tokens->list[tokens->length++];
 
       t->type = TOKEN_OPERATOR;

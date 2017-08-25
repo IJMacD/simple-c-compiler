@@ -1,6 +1,8 @@
 #ifndef LEXER_H
 #define LEXER_H
 
+#include <ctype.h>
+
 #define TOKEN_NAME    1
 #define TOKEN_NUMBER  2
 #define TOKEN_STRING  3

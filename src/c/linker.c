@@ -7,16 +7,21 @@
 char* linker(char *program, int include_flags) {
 
   static const char include_stdio[] = "#include <stdio.h>\n";
+  static const char include_power[] = "int power(int a, int b) { int r = 1; while(b--) r *= a; return r; }\n";
   static const char include_add[] = "int add(int a, int b) { return a + b; }\n";
   static const char include_sub[] = "int subtract(int a, int b) { return a - b; }\n";
   static const char include_mul[] = "int multiply(int a, int b) { return a * b; }\n";
   static const char include_div[] = "int divide(int a, int b) { return a / b; }\n";
-  static const char include_fac[] = "int factorial(int a) { if (a <= 0) return 1; int i, b = 1; for(i = 1; i <= a; i++) b *= i; return b; }\n";
+  static const char include_fac[] = "int factorial(int a) { int b = 1; while(a > 0) b *= a--; return b; }\n";
 
   int output_len = strlen(program) + 1;
 
   if(include_flags & FLAG_INCLUDE_STDIO) {
     output_len += sizeof(include_stdio) - 1;
+  }
+
+  if(include_flags & FLAG_INCLUDE_POWER) {
+    output_len += sizeof(include_power) - 1;
   }
 
   if(include_flags) {
@@ -48,6 +53,10 @@ char* linker(char *program, int include_flags) {
 
   if(include_flags & FLAG_INCLUDE_STDIO) {
     append(output, &offset, include_stdio);
+  }
+
+  if(include_flags & FLAG_INCLUDE_POWER) {
+    append(output, &offset, include_power);
   }
 
   if(include_flags & FLAG_INCLUDE_ADD) {

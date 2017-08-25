@@ -124,12 +124,7 @@ char* generate_call (ast_node *node) {
   param1 = generate(node->param1);
   param1_len = strlen(param1);
 
-  if(node->param2 == NULL) {
-    if (strcmp(node->string_val, "Stdlib.factorial")) {
-      fprintf(stderr, "Generator Error: `%s` Missing second paramater.\n", node->string_val);
-      exit(-1);
-    }
-  } else {
+  if(node->param2 != NULL) {
     param2 = generate(node->param2);
     param2_len = strlen(param2);
   }

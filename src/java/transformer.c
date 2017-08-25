@@ -17,16 +17,10 @@ ast_node *visitor(ast_node *node, ast_node *parent) {
 
     print_node->type = NODE_CALL;
 
-    print_node->string_val = "System.out.printf";
+    print_node->string_val = "System.out.println";
 
-    ast_node *format_node = malloc(sizeof(ast_node));
-
-    format_node->type = NODE_STRING;
-
-    format_node->string_val = "%d%n";
-
-    print_node->param1 = format_node;
-    print_node->param2 = node;
+    print_node->param1 = node;
+    print_node->param2 = NULL;
 
     ast_node *statement_node = malloc(sizeof(ast_node) + sizeof(ast_node *));
 
@@ -36,6 +30,13 @@ ast_node *visitor(ast_node *node, ast_node *parent) {
     statement_node->body_length = 1;
 
     return statement_node;
+  }
+  else if (node->type == NODE_OPERATOR && node->string_val[0] == '^') {
+    node->type = NODE_CALL;
+    char const name[] = "(int)Math.pow";
+    node->string_val = malloc(sizeof(name));
+    strcpy(node->string_val, name);
+    return node;
   }
   else if (node->type == NODE_OPERATOR && node->string_val[0] == '!') {
     node->type = NODE_CALL;
