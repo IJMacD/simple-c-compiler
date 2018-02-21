@@ -94,7 +94,7 @@ int main(int argc, char **argv){
 void display_help(FILE *fd, char *name) {
   fprintf(fd,
   "Usage: %s [OPTIONS] \"PROGRAM\"\n\n"
-  "MancCALC Simple Tokenizer, Parser, Traverser, Transformer, Generator,\n"
+  "SimpleCalc Simple Tokenizer, Parser, Traverser, Transformer, Generator,\n"
   "Linker, Executor. If PROGRAM is not given it will expect input on stdin.\n\n"
   "\t-r\tRetain output source (don't auto-delete)\n"
   "\t-p\tPrint generated source to stdout\n"
@@ -103,11 +103,12 @@ void display_help(FILE *fd, char *name) {
   "\t-t\tTransform AST (to function based rather than operator based)\n"
   "\t-x\tExecute the raw AST (default if -c or -g not provided)\n"
   "\t-g\tCreate a graph of the raw AST\n"
-  "\t\t(default creates image, with -p outputs source instead)\n"
-  "\t-c\tCompiles and executes AST transformed into C\n"
+  "\t\t(default creates image, with -p outputs graph source (.dot) instead)\n"
+  "\t-c\tCompiles and executes AST transformed into target source code\n"
   "\t\t(with -p outputs source instead)\n"
   "\t-u\tIgnore all input and generate a random AST\n"
   "\t-h\tDisplay this help text\n\n"
   "Example:\n"
-  "\t%s -p \"add 5 subtract 4 2\"\n", name, name);
+  "\t%s \"+ 5 * 7 3\"\n"
+  "\t%s \"add 5 subtract 4 2\"\n", name, name, name);
 }

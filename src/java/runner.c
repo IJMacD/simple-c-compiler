@@ -6,7 +6,11 @@ void runner(const char *output, int retain) {
   fprintf(f, "%s", output);
   fclose(f);
 
+#ifdef linux
+  system("javac output.java && java Program && rm Program.class");
+#else
   system("javac output.java && java Program && del Program.class Stdlib.class");
+#endif
 
   if (!(retain)) {
     remove("output.java");
