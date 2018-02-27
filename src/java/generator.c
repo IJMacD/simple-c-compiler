@@ -58,7 +58,7 @@ char* generate_program(ast_node *node) {
   static const int tail_len = sizeof(tail) - 1;
 
   char body[1024];
-  int offset = 0;
+  size_t offset = 0;
   int  i;
 
   for(i = 0; i < node->body_length; i++) {
@@ -103,7 +103,7 @@ char* generate_statement(ast_node *node) {
   int output_len = strlen(body) + 3;
 
   char *output = malloc(output_len);
-  int offset = 0;
+  size_t offset = 0;
 
   append(output, &offset, body);
   output[offset++] = ';';
@@ -138,7 +138,7 @@ char* generate_call (ast_node *node) {
   }
 
   char *output = malloc(name_len + param1_len + param2_len + 5);
-  int offset = 0;
+  size_t offset = 0;
 
   append(output, &offset, node->string_val);
   output[offset++] = '(';
@@ -197,7 +197,7 @@ char* generate_operator (ast_node *node) {
   int param2_len = strlen(param2);
 
   char *output = malloc(param1_len + param2_len + 6);
-  int offset = 0;
+  size_t offset = 0;
 
   output[offset++] = '(';
   append(output, &offset, param1);
@@ -226,7 +226,7 @@ char* generate_cast (ast_node *node) {
   int param1_len = strlen(param1);
 
   char *output = malloc(type_len + param1_len + 3);
-  int offset = 0;
+  size_t offset = 0;
 
   output[offset++] = '(';
   append(output, &offset, node->string_val);

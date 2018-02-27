@@ -1,1 +1,1 @@
-int append(char *, int *, char const *);
+size_t append(char *, size_t *, char const *);

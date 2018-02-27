@@ -19,7 +19,7 @@ char* linker(char *program, int include_flags) {
   }
 
   char *output = malloc(output_len);
-  int offset = 0;
+  size_t offset = 0;
 
   if(include_flags & FLAG_INCLUDE_FAC) {
     append(output, &offset, include_fac);

@@ -12,3 +12,7 @@ clang -lm *.o -o calc-java
 rm *.o
 clang -c ../src/*.c ../src/python/*.c
 clang -lm *.o -o calc-python
+
+rm *.o
+clang -c ../src/*.c ../src/llvm/*.c
+clang -lm *.o -o calc-llvm
