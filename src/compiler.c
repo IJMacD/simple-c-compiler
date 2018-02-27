@@ -58,7 +58,7 @@ void compiler(const char *input, int options) {
     root_node = transformer(root_node);
 
     if (options & OPTION_TRANSFORM) {
-      root_node = traverser(root_node, operator_switcher);
+      root_node = traverser(root_node, operator_switcher, NULL);
     }
 
     if (options & OPTION_VERBOSE) {

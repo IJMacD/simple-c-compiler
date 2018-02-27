@@ -11,3 +11,5 @@ char* generate_number(ast_node *);
 char* generate_string(ast_node *);
 char* generate_operator(ast_node *);
 char* generate_cast(ast_node *);
+char* generate_name(ast_node *);
+char* generate_assignment(ast_node *);

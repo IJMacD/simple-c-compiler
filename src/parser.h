@@ -4,12 +4,14 @@
 #include "lexer.h"
 
 #define NODE_PROGRAM 1
-#define NODE_CALL 2
-#define NODE_NUMBER 3
-#define NODE_STRING 4
-#define NODE_OPERATOR 5
+#define NODE_CALL 2       // <- expression
+#define NODE_NUMBER 3     // <- expression
+#define NODE_STRING 4     // <- expression
+#define NODE_OPERATOR 5   // <- expression
 #define NODE_STATEMENT 6
-#define NODE_CAST 7
+#define NODE_CAST 7       // <- expression
+#define NODE_NAME 8       // <- expression
+#define NODE_ASSIGNMENT 9 // NAME = EXPRESSION
 
 typedef struct ast_node_struct {
   int type;

@@ -156,8 +156,19 @@ void debug_node_val(ast_node *node, int depth) {
     if(node->param1 != NULL)
       debug_node_val(node->param1, depth + 1);
   }
+  else if(node->type == NODE_NAME) {
+    fprintf(stderr, "%sName: %s\n", prefix, node->string_val);
+  }
+  else if(node->type == NODE_ASSIGNMENT) {
+    fprintf(stderr, "%sAssignment\n", prefix);
+    if(node->param1 != NULL)
+      debug_node_val(node->param1, depth + 1);
+    if(node->param2 != NULL)
+      debug_node_val(node->param2, depth + 1);
+  }
   else {
-    if(node->body[0] != NULL)
-      debug_node_val(node->body[0], depth);
+    fprintf(stderr, "%sUnknown Node: %d\n", prefix, node->type);
+    // if(node->body[0] != NULL)
+    //   debug_node_val(node->body[0], depth);
   }
 }

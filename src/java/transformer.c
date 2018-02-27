@@ -5,7 +5,7 @@
 
 /*    TRANSFORMER   */
 ast_node *transformer(ast_node *node) {
-  return traverser(node, visitor);
+  return traverser(node, visitor, NULL);
 }
 
 ast_node *visitor(ast_node *node, ast_node *parent) {
