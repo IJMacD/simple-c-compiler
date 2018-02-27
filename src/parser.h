@@ -13,7 +13,7 @@
 
 typedef struct ast_node_struct {
   int type;
-  int int_val;
+  long int_val;
   char *string_val;
   struct ast_node_struct *param1;
   struct ast_node_struct *param2;

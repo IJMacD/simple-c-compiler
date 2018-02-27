@@ -149,7 +149,7 @@ char* generate_call (ast_node *node) {
 
 char* generate_number(ast_node *node) {
   char *output = calloc(32, sizeof(char));
-  sprintf(output, "%d", node->int_val);
+  sprintf(output, "%ld", node->int_val);
   return output;
 }
 

@@ -8,12 +8,12 @@ char* linker(char *program, int include_flags) {
 
   static const char include_stdio[] = "#include <stdio.h>\n";
   static const char include_math[] = "#include <math.h>\n";
-  static const char include_add[] = "int add(int a, int b) { return a + b; }\n";
-  static const char include_sub[] = "int subtract(int a, int b) { return a - b; }\n";
-  static const char include_mul[] = "int multiply(int a, int b) { return a * b; }\n";
-  static const char include_div[] = "int divide(int a, int b) { return a / b; }\n";
-  static const char include_fac[] = "int factorial(int a) { int b = 1; while(a > 0) b *= a--; return b; }\n";
-  static const char include_power[] = "int power(int a, int b) { int r = 1; while(b--) r *= a; return r; }\n";
+  static const char include_add[] = "long add(long a, long b) { return a + b; }\n";
+  static const char include_sub[] = "long subtract(long a, long b) { return a - b; }\n";
+  static const char include_mul[] = "long multiply(long a, long b) { return a * b; }\n";
+  static const char include_div[] = "long divide(long a, long b) { return a / b; }\n";
+  static const char include_fac[] = "long factorial(long a) { long b = 1; while(a > 0) b *= a--; return b; }\n";
+  static const char include_power[] = "long power(long a, long b) { long r = 1; while(b--) r *= a; return r; }\n";
 
   int output_len = strlen(program) + 1;
 

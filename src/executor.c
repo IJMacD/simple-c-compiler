@@ -8,17 +8,18 @@ void executor (ast_node *node) {
   execute_node(node);
 }
 
-int execute_node (ast_node *node) {
+long execute_node (ast_node *node) {
   if(node == NULL) {
     fprintf(stderr, "Generator Error: Missing Node.\n");
     exit(-1);
   }
 
-  int i, a, b;
+  int i;
+  long a, b;
   switch(node->type) {
     case NODE_PROGRAM:
       for (i = 0; i < node->body_length; i++) {
-        printf("%d\n", execute_node(node->body[i]));
+        printf("%ld\n", execute_node(node->body[i]));
       }
       return 0;
     case NODE_OPERATOR:

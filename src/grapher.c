@@ -40,7 +40,7 @@ void graph_node (ast_node *node, char *parent_id, int *operator_count, int *numb
                 graph_node(node->param2, tmp_buff, operator_count, number_count, output);
             break;
         case NODE_NUMBER:
-            fprintf(output, "\tN%d [label=%d]\n", *number_count, node->int_val);
+            fprintf(output, "\tN%d [label=%ld]\n", *number_count, node->int_val);
 
             if (parent_id != NULL) {
                 fprintf(output, "\t%s -- N%d\n", parent_id, *number_count);

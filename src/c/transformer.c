@@ -23,7 +23,7 @@ ast_node *visitor(ast_node *node, ast_node *parent) {
 
     format_node->type = NODE_STRING;
 
-    format_node->string_val = "%d\\n";
+    format_node->string_val = "%ld\\n";
 
     print_node->param1 = format_node;
     print_node->param2 = node;

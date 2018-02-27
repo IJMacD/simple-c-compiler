@@ -46,7 +46,7 @@ ast_node* walk(int *index, token_list *tokens) {
     if(current.type == TOKEN_NUMBER) {
       ast_node *node = malloc(sizeof(ast_node));
       node->type = NODE_NUMBER;
-      node->int_val = atoi(current.value);
+      node->int_val = atol(current.value);
 
       return node;
     }
@@ -139,7 +139,7 @@ void debug_node_val(ast_node *node, int depth) {
       debug_node_val(node->param2, depth + 1);
   }
   else if (node->type == NODE_NUMBER) {
-    fprintf(stderr, "%sNumber: %d\n", prefix, node->int_val);
+    fprintf(stderr, "%sNumber: %ld\n", prefix, node->int_val);
   }
   else if (node->type == NODE_STRING) {
     fprintf(stderr, "%sString: \"%s\"\n", prefix, node->string_val);
