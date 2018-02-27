@@ -4,6 +4,15 @@
 
 #include "../generator.h"
 
+char* generate(ast_node *);
+char* generate_program(ast_node *);
+char* generate_statement(ast_node *);
+char* generate_call(ast_node *);
+char* generate_number(ast_node *);
+char* generate_string(ast_node *);
+char* generate_operator(ast_node *);
+char* generate_cast(ast_node *);
+
 int *include_flags;
 
 char* generator(ast_node *node, int *flags) {
