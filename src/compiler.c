@@ -3,6 +3,9 @@
 
 #include "compiler.h"
 
+ast_node* operator_switcher(ast_node *, ast_node *);
+ast_node* constant_folder(ast_node *, ast_node *);
+
 void compiler(const char *input, int options) {
 
   ast_node *root_node;
@@ -30,8 +33,9 @@ void compiler(const char *input, int options) {
     debug_node(root_node);
   }
 
-  if(options & OPTION_EXECUTE) {
-    executor(root_node);
+
+  if (options & OPTION_CONSTANT_FOLDING) {
+    root_node = traverser(root_node, NULL, constant_folder);
   }
 
   if(options & OPTION_GRAPH) {
@@ -53,13 +57,18 @@ void compiler(const char *input, int options) {
     }
   }
 
-  if (options & OPTION_COMPILE) {
+  if(options & OPTION_EXECUTE) {
+    executor(root_node);
+  }
 
-    root_node = transformer(root_node);
+  if (options & OPTION_COMPILE) {
 
     if (options & OPTION_TRANSFORM) {
       root_node = traverser(root_node, operator_switcher, NULL);
     }
+
+    // Do target specific transformation
+    root_node = transformer(root_node);
 
     if (options & OPTION_VERBOSE) {
       debug_node(root_node);
@@ -112,6 +121,45 @@ ast_node* operator_switcher(ast_node *node, ast_node *parent) {
   //   node->body_length++;
   //   node->body[1] = node->body[0];
   // }
+
+  return node;
+}
+
+ast_node* constant_folder(ast_node *node, ast_node *parent) {
+
+  if (node->type == NODE_OPERATOR) {
+    if (node->param1 != NULL &&
+        node->param1->type == NODE_NUMBER &&
+        node->param2 != NULL &&
+        node->param2->type == NODE_NUMBER) {
+
+      long result;
+
+      switch(node->string_val[0]) {
+        case '+':
+          result = node->param1->int_val + node->param2->int_val;
+          break;
+        case '-':
+          result = node->param1->int_val - node->param2->int_val;
+          break;
+        case '*':
+          result = node->param1->int_val * node->param2->int_val;
+          break;
+        case '/':
+          result = node->param1->int_val / node->param2->int_val;
+          break;
+        default:
+          // Didn't recognise the operator so just return the original node
+          return node;
+      }
+
+      ast_node *result_node = malloc(sizeof(ast_node));
+      result_node->type = NODE_NUMBER;
+      result_node->int_val = result;
+
+      return result_node;
+    }
+  }
 
   return node;
 }

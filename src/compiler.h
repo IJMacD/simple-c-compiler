@@ -17,6 +17,6 @@
 #define OPTION_GRAPH     32
 #define OPTION_COMPILE   64
 #define OPTION_RANDOM   128
+#define OPTION_CONSTANT_FOLDING   256
 
 void compiler(const char*, int);
-ast_node* operator_switcher(ast_node *, ast_node *);

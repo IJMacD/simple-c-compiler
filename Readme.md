@@ -17,6 +17,7 @@ Build using `./build.sh` or `.\build.bat` then follow usage instructions.
                 (won't compile or output image file)
         -v      Verbose output (display tokens and AST)
         -t      Transform AST (to function based rather than operator based)
+        -O      Optimise AST (perform Constant Folding)
         -x      Execute the raw AST (default if -c or -g not provided)
         -g      Create a graph of the raw AST
                 (default creates image, with -p outputs graph source (.dot) instead)

@@ -38,25 +38,7 @@ void add_node (ast_node* node) {
 
 /*    TRANSFORMER   */
 ast_node *transformer(ast_node *node) {
-  return traverser(node, visitor_enter, visitor_leave);
-}
-
-ast_node *visitor_enter(ast_node *node, ast_node *parent) {
-
-  if (node->type == NODE_PROGRAM) {
-
-    if (node->body_length != 1) {
-      fprintf(stderr, "Transformer Error: Program must have exactly one child.\n");
-      exit(-1);
-    }
-
-    if (node->body[0]->type != NODE_OPERATOR) {
-      fprintf(stderr, "Transformer Error: Program's only child must be an operator.\n");
-      exit(-1);
-    }
-  }
-
-  return node;
+  return traverser(node, NULL, visitor_leave);
 }
 
 ast_node *visitor_leave(ast_node *node, ast_node *parent) {
@@ -123,7 +105,6 @@ ast_node *visitor_leave(ast_node *node, ast_node *parent) {
 
     ast_node* root_node = malloc(sizeof(ast_node) + child_count * sizeof(ast_node *));
     root_node->type = NODE_PROGRAM;
-    root_node->body_length = child_count;
 
     // Traverse our linked list to add children
     int i = 0;
@@ -134,26 +115,47 @@ ast_node *visitor_leave(ast_node *node, ast_node *parent) {
       }
       while ((curr = curr->next) != NULL);
     }
+    root_node->body_length = body_node_count;
+
+    ast_node *param_node = malloc(sizeof(ast_node));
 
     // Add the original body node at the end
-    root_node->body[i++] = node->body[0];
+    if (node->body[0]->type == NODE_STATEMENT) {
+      // Only statement nodes can be added to the root
+      root_node->body[i++] = node->body[0];
+      root_node->body_length++;
+
+      // Get the name node, from the assignment node, from
+      // the statment node, from the program node
+      ast_node *name_node = node->body[0]->body[0]->param1;
+
+      param_node->type = NODE_NAME;
+      int len = strlen(name_node->string_val);
+      char * var_name = malloc(len + 1);
+      strcpy(var_name, name_node->string_val); // copy the name from the
+      var_name[len] = '\0';
+      param_node->string_val = var_name;
+
+    } else if (node->body[0]->type == NODE_NUMBER) {
+      // There is the possibility (e.g. due to constant folding)
+      // our node is just a numeric node.
+      // In which case we can just use it directly as the param
+      // node for printf
+
+      param_node = node->body[0];
+    }
 
     // Call printf
-    ast_node *name_node = malloc(sizeof(ast_node));
-    name_node->type = NODE_NAME;
-    char * var_name = calloc(32, 1);
-    sprintf(var_name, "%%%d", next_var_num - 1); // Get the last var assigned
-    name_node->string_val = var_name;
-
     ast_node* call_node = malloc(sizeof(ast_node));
     call_node->type = NODE_CALL;
     char * call_name = calloc(7, 1);
     strcpy(call_name, "printf");
     call_node->string_val = call_name;
     call_node->param1 = NULL; // this will be ignored by generator
-    call_node->param2 = name_node;
+    call_node->param2 = param_node;
 
     root_node->body[i++] = call_node;
+    root_node->body_length++;
 
     return root_node;
   }

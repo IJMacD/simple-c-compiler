@@ -34,6 +34,9 @@ int main(int argc, char **argv){
           case 't':
             compiler_options |= OPTION_TRANSFORM;
             break;
+          case 'O':
+            compiler_options |= OPTION_CONSTANT_FOLDING;
+            break;
           case 'x':
             compiler_options |= OPTION_EXECUTE;
             break;
@@ -101,6 +104,7 @@ void display_help(FILE *fd, char *name) {
   "\t\t(won't compile or output image file)\n"
   "\t-v\tVerbose output (display tokens and AST)\n"
   "\t-t\tTransform AST (to function based rather than operator based)\n"
+  "\t-O\tOptimise AST (perform Constant Folding)\n"
   "\t-x\tExecute the raw AST (default if -c or -g not provided)\n"
   "\t-g\tCreate a graph of the raw AST\n"
   "\t\t(default creates image, with -p outputs graph source (.dot) instead)\n"

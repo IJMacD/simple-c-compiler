@@ -22,6 +22,7 @@ void graph_node (ast_node *node, char *parent_id, int *operator_count, int *numb
             fprintf(output, "}\n");
             break;
         case NODE_OPERATOR:
+        case NODE_CALL:
             fprintf(output, "\tO%d [label=\"%s\"]\n", *operator_count, node->string_val);
 
             if (parent_id != NULL) {
