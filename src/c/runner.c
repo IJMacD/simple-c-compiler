@@ -8,6 +8,8 @@ void runner(const char *output, int retain) {
 
 #ifdef linux
   system("clang output.c -lm -o output && ./output && rm output");
+#else
+  system("clang output.c -o output.exe && .\\output.exe && del output.exe");
 #endif
 
   if (!(retain)) {

@@ -34,4 +34,4 @@ SimpleCalc can also produce graphical output (with the help of GrahViz's `dot`).
     ./build/calc -g "+ 91 * * 2 + 1 + 0 5 - 11 - 2 - 9 + 27 8"
 
 Will produce something like:
-![Sample Graphical Output](./output.png)
+![Sample Graphical Output](./sample.png)
