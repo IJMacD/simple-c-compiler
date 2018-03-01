@@ -24,6 +24,7 @@ int body_node_count = 0;
 void add_node (ast_node* node) {
   node_list* new_item = malloc(sizeof(node_list));
   new_item->node = node;
+  new_item->next = NULL;
 
   if (head == NULL) {
     head = new_item;
@@ -54,44 +55,30 @@ ast_node *visitor_leave(ast_node *node, ast_node *parent) {
       return node;
     }
 
-    ast_node *name_node = malloc(sizeof(ast_node));
-
-    name_node->type = NODE_NAME;
-
     char * var_name = calloc(32, 1);
     sprintf(var_name, "%%%d", next_var_num++);
 
-    name_node->string_val = var_name;
+    ast_node *name_node = make_node(NODE_NAME, 0, var_name, 0);
+    free(var_name);
 
-    ast_node *assignment_node = malloc(sizeof(ast_node));
-
-    assignment_node->type = NODE_ASSIGNMENT;
-
+    ast_node *assignment_node = make_node(NODE_ASSIGNMENT, 0, NULL, 0);
     assignment_node->param1 = name_node;
     assignment_node->param2 = node;
 
-    ast_node *statement_node = malloc(sizeof(ast_node) + 1 * sizeof(ast_node *));
+    ast_node *statement_node = make_node(NODE_STATEMENT, 0, NULL, 1);
+    add_child_node(statement_node, assignment_node);
 
-    statement_node->type = NODE_STATEMENT;
-
-    statement_node->body[0] = assignment_node;
-    statement_node->body_length = 1;
-
-    // Operators need to be at the root,
-    // if this is not the case we need
-    // to add it to our dynamic list
+    // Operators need to be at the root, if this is not the case we need
+    // to add it to our dynamic list.
+    // Then return a new name node to replace ourself.
     if (parent->type == NODE_OPERATOR) {
       add_node(statement_node);
 
-      ast_node *name_node = malloc(sizeof(ast_node));
-      name_node->type = NODE_NAME;
-      name_node->string_val = var_name;
-
-      return name_node;
+      return make_node(NODE_NAME, 0, var_name, 0);
     }
 
     // If we've got to here it means we were the original root
-    // operator node. In which case just replace ourself with the statement node
+    // operator node. In which case just replace ourself with the statement node.
     return statement_node;
   }
 
@@ -103,38 +90,29 @@ ast_node *visitor_leave(ast_node *node, ast_node *parent) {
 
     int child_count = body_node_count + 2;
 
-    ast_node* root_node = malloc(sizeof(ast_node) + child_count * sizeof(ast_node *));
-    root_node->type = NODE_PROGRAM;
+    ast_node* root_node = make_node(NODE_PROGRAM, 0, NULL, child_count);
 
     // Traverse our linked list to add children
-    int i = 0;
     if (head != NULL) {
       node_list* curr = head;
       do {
-        root_node->body[i++] = curr->node;
+        add_child_node(root_node, curr->node);
       }
       while ((curr = curr->next) != NULL);
     }
-    root_node->body_length = body_node_count;
 
-    ast_node *param_node = malloc(sizeof(ast_node));
+    ast_node *param_node;
 
     // Add the original body node at the end
     if (node->body[0]->type == NODE_STATEMENT) {
       // Only statement nodes can be added to the root
-      root_node->body[i++] = node->body[0];
-      root_node->body_length++;
+      add_child_node(root_node, node->body[0]);
 
       // Get the name node, from the assignment node, from
       // the statment node, from the program node
       ast_node *name_node = node->body[0]->body[0]->param1;
 
-      param_node->type = NODE_NAME;
-      int len = strlen(name_node->string_val);
-      char * var_name = malloc(len + 1);
-      strcpy(var_name, name_node->string_val); // copy the name from the
-      var_name[len] = '\0';
-      param_node->string_val = var_name;
+      param_node = make_node(NODE_NAME, 0, name_node->string_val, 0);
 
     } else if (node->body[0]->type == NODE_NUMBER) {
       // There is the possibility (e.g. due to constant folding)
@@ -146,16 +124,14 @@ ast_node *visitor_leave(ast_node *node, ast_node *parent) {
     }
 
     // Call printf
-    ast_node* call_node = malloc(sizeof(ast_node));
-    call_node->type = NODE_CALL;
-    char * call_name = calloc(7, 1);
-    strcpy(call_name, "printf");
-    call_node->string_val = call_name;
+    ast_node* call_node = make_node(NODE_CALL, 0, "printf", 0);
     call_node->param1 = NULL; // this will be ignored by generator
     call_node->param2 = param_node;
 
-    root_node->body[i++] = call_node;
-    root_node->body_length++;
+    add_child_node(root_node, call_node);
+
+    node->body[0] = NULL;
+    free_node(node);
 
     return root_node;
   }

@@ -6,7 +6,7 @@
       "type": "cppvsdbg",
       "request": "launch",
       "program": "${workspaceRoot}/build/calc-llvm.exe",
-      "args": ["-p", "-c", "-v", "+ * 9 * 1 2 - 2 6"],
+      "args": ["-p", "-c", "-v", "-O", "+ * 9 * 1 2 - 2 6"],
       "stopAtEntry": false,
       "cwd": "${workspaceRoot}",
       "environment": [],

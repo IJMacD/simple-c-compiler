@@ -6,13 +6,11 @@
 
 /*    PARSER    */
 ast_node* parser(token_list *tokens) {
-  ast_node *root_node = malloc(sizeof(ast_node) + sizeof(ast_node *));
-  root_node->type = NODE_PROGRAM;
+  ast_node *root_node = make_node(NODE_PROGRAM, 0, NULL, 1);
 
   int index = 0;
 
-  root_node->body[0] = walk(&index, tokens);
-  root_node->body_length = 1;
+  add_child_node(root_node, walk(&index, tokens));
 
   if(index < tokens->length - 1){
     fprintf(stderr, "Parsing Error: Excess tokens provided.\n");
@@ -28,9 +26,7 @@ ast_node* walk(int *index, token_list *tokens) {
     token current = tokens->list[*index];
 
     if(current.type == TOKEN_NAME) {
-      ast_node *node = malloc(sizeof(ast_node));
-      node->type = NODE_CALL;
-      node->string_val = current.value;
+      ast_node *node = make_node(NODE_CALL, 0, current.value, 0);
 
       (*index)++;
 
@@ -44,25 +40,15 @@ ast_node* walk(int *index, token_list *tokens) {
     }
 
     if(current.type == TOKEN_NUMBER) {
-      ast_node *node = malloc(sizeof(ast_node));
-      node->type = NODE_NUMBER;
-      node->int_val = atol(current.value);
-
-      return node;
+      return make_node(NODE_NUMBER, atol(current.value), NULL, 0);
     }
 
     if(current.type == TOKEN_STRING) {
-      ast_node *node = malloc(sizeof(ast_node));
-      node->type = NODE_STRING;
-      node->string_val = current.value;
-
-      return node;
+      return make_node(NODE_STRING, 0, current.value, 0);
     }
 
     if(current.type == TOKEN_OPERATOR) {
-      ast_node *node = malloc(sizeof(ast_node));
-      node->type = NODE_OPERATOR;
-      node->string_val = current.value;
+      ast_node *node = make_node(NODE_OPERATOR,0, current.value, 0);
 
       (*index)++;
 
@@ -72,8 +58,6 @@ ast_node* walk(int *index, token_list *tokens) {
         (*index)++;
 
         node->param2 = walk(index, tokens);
-      } else {
-        node->param2 = NULL;
       }
 
       return node;
@@ -86,27 +70,54 @@ ast_node* walk(int *index, token_list *tokens) {
   return NULL;
 }
 
-void free_node(ast_node *node) {
+ast_node * make_node(NODE_TYPE type, long int_val, char * string_val, int child_count) {
+  ast_node *new_node = malloc(sizeof(ast_node) + child_count * sizeof(ast_node *));
 
-  if(node->type == NODE_PROGRAM) {
-    int i;
-    for(i = 0; i < node->body_length; i++) {
-      if (node->body[i] != NULL) {
-        free_node(node->body[i]);
-      }
+  new_node->type = type;
+  new_node->int_val = int_val;
+
+  if (string_val != NULL) {
+
+    char *s = malloc(strlen(string_val) + 1);
+    strcpy(s, string_val);
+
+    new_node->string_val = s;
+  } else {
+    new_node->string_val = NULL;
+  }
+
+  new_node->param1 = NULL;
+  new_node->param2 = NULL;
+
+  new_node->body_length = 0;
+
+  return new_node;
+}
+
+void add_child_node(ast_node *parent, ast_node *child) {
+  parent->body[parent->body_length++] = child;
+}
+
+void free_node(ast_node *node) {
+  if (node == NULL) {
+    // BUG detected: Why were we given a null node?
+    return;
+  }
+
+  int i;
+  for(i = 0; i < node->body_length; i++) {
+    if (node->body[i] != NULL) {
+      free_node(node->body[i]);
     }
   }
-  else if(node->type == NODE_STATEMENT) {
-    if (node->body[0] != NULL) {
-      free_node(node->body[0]);
-    }
-  } else if(node->type == NODE_CALL ||
-    node->type == NODE_OPERATOR ||
-    node->type == NODE_CAST
-  ) {
-    if(node->param1 != NULL) free_node(node->param1);
-    if(node->param2 != NULL) free_node(node->param2);
+
+  if(node->param1 != NULL) free_node(node->param1);
+  if(node->param2 != NULL) free_node(node->param2);
+
+  if (node->string_val != NULL) {
+    free(node->string_val);
   }
+
   free(node);
 }
 

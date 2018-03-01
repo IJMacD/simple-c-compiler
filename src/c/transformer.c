@@ -13,54 +13,39 @@ ast_node *visitor(ast_node *node, ast_node *parent) {
   if (parent != NULL && parent->type == NODE_PROGRAM &&
       node->type != NODE_STATEMENT) {
 
-    ast_node *print_node = malloc(sizeof(ast_node));
+    ast_node *print_node = make_node(NODE_CALL, 0, "printf", 0);
 
-    print_node->type = NODE_CALL;
-
-    print_node->string_val = "printf";
-
-    ast_node *format_node = malloc(sizeof(ast_node));
-
-    format_node->type = NODE_STRING;
-
-    format_node->string_val = "%ld\\n";
+    ast_node *format_node = make_node(NODE_STRING, 0, "%ld\\n", 0);
 
     print_node->param1 = format_node;
     print_node->param2 = node;
 
-    ast_node *statement_node = malloc(sizeof(ast_node) + sizeof(ast_node *));
-
-    statement_node->type = NODE_STATEMENT;
-
-    statement_node->body[0] = print_node;
-    statement_node->body_length = 1;
+    ast_node *statement_node = make_node(NODE_STATEMENT, 0, NULL, 1);
+    add_child_node(statement_node, print_node);
 
     return statement_node;
   }
   else if (node->type == NODE_OPERATOR && node->string_val[0] == '^') {
 
-    ast_node *cast_node = malloc(sizeof(ast_node));
-    cast_node->type = NODE_CAST;
-    char const type_name[] = "int";
-    cast_node->string_val = malloc(sizeof(type_name));
-    strcpy(cast_node->string_val, type_name);
+    ast_node *cast_node = make_node(NODE_CAST, 0, "int", 0);
     cast_node->param1 = node->param1;
 
-    node->type = NODE_CALL;
-    char const name[] = "pow";
-    node->string_val = malloc(sizeof(name));
-    strcpy(node->string_val, name);
+    ast_node *call_node = make_node(NODE_CALL, 0, "pow", 0);
+    cast_node->param1 = call_node;
 
-    cast_node->param1 = node;
+    node->param1 = NULL;
+    free_node(node);
 
     return cast_node;
   }
   else if (node->type == NODE_OPERATOR && node->string_val[0] == '!') {
-    node->type = NODE_CALL;
-    char const name[] = "factorial";
-    node->string_val = malloc(sizeof(name));
-    strcpy(node->string_val, name);
-    return node;
+    ast_node * call_node = make_node(NODE_CALL, 0, "factorial", 0);
+    call_node->param1 = node->param1;
+
+    node->param1 = NULL;
+    free_node(node);
+
+    return call_node;
   }
 
   return node;

@@ -9,7 +9,7 @@ ast_node* constant_folder(ast_node *, ast_node *);
 void compiler(const char *input, int options) {
 
   ast_node *root_node;
-  token_list *tokens;
+  token_list *tokens = NULL;
 
   if(options & OPTION_RANDOM) {
     root_node = randomiser();
@@ -27,12 +27,16 @@ void compiler(const char *input, int options) {
     }
 
     root_node = parser(tokens);
+
+    if(tokens != NULL) {
+      free_tokens(tokens);
+    }
   }
+
 
   if (options & OPTION_VERBOSE) {
     debug_node(root_node);
   }
-
 
   if (options & OPTION_CONSTANT_FOLDING) {
     root_node = traverser(root_node, NULL, constant_folder);
@@ -91,10 +95,6 @@ void compiler(const char *input, int options) {
 
     free(output);
   }
-
-  if(tokens != NULL) {
-    free_tokens(tokens);
-  }
   free_node(root_node);
 }
 
@@ -115,12 +115,6 @@ ast_node* operator_switcher(ast_node *node, ast_node *parent) {
       node->string_val = "divide";
     }
   }
-
-  // if(node->type == NODE_PROGRAM) {
-  //   realloc(node, sizeof(ast_node) + 2 * sizeof(ast_node *));
-  //   node->body_length++;
-  //   node->body[1] = node->body[0];
-  // }
 
   return node;
 }
@@ -153,11 +147,9 @@ ast_node* constant_folder(ast_node *node, ast_node *parent) {
           return node;
       }
 
-      ast_node *result_node = malloc(sizeof(ast_node));
-      result_node->type = NODE_NUMBER;
-      result_node->int_val = result;
+      free_node(node);
 
-      return result_node;
+      return make_node(NODE_NUMBER, result, NULL, 0);
     }
   }
 

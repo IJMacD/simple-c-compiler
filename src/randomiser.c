@@ -3,35 +3,34 @@
 int node_count = 0;
 
 ast_node *randomiser() {
-  ast_node *node = malloc(sizeof(ast_node) + sizeof(ast_node *));
-  node->type = NODE_PROGRAM;
+  ast_node *node = make_node(NODE_PROGRAM, 0, NULL, 1);
 
-  node->body[0] = random_operator();
-  node->body_length++;
+  add_child_node(node, random_operator());
 
   return node;
 }
 
 ast_node *random_operator() {
-  ast_node *out = malloc(sizeof(ast_node));
-  out->type = NODE_OPERATOR;
-
   node_count++;
+
+  char * string_val;
 
   switch(rand() % 4) {
     case 0:
-      out->string_val = "+";
+      string_val = "+";
       break;
     case 1:
-      out->string_val = "-";
+      string_val = "-";
       break;
     case 2:
-      out->string_val = "*";
+      string_val = "*";
       break;
     case 3:
-      out->string_val = "/";
+      string_val = "/";
       break;
   }
+
+  ast_node *out = make_node(NODE_OPERATOR, 0, string_val, 0);
 
   out->param1 = (rand() %  2 || node_count >= RANDOMISER_NODE_COUNT) ? random_number() : random_operator();
   out->param2 = (rand() %  2 || node_count >= RANDOMISER_NODE_COUNT) ? random_number() : random_operator();
@@ -40,12 +39,7 @@ ast_node *random_operator() {
 }
 
 ast_node *random_number() {
-  ast_node *out = malloc(sizeof(ast_node));
-  out->type = NODE_NUMBER;
-
   node_count++;
 
-  out->int_val = RANDOMISER_NUM_MIN + (rand() % (RANDOMISER_NUM_MAX - RANDOMISER_NUM_MIN));
-
-  return out;
+  return make_node(NODE_NUMBER, RANDOMISER_NUM_MIN + (rand() % (RANDOMISER_NUM_MAX - RANDOMISER_NUM_MIN)), NULL, 0);
 }
