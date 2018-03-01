@@ -77,11 +77,7 @@ ast_node * make_node(NODE_TYPE type, long int_val, char * string_val, int child_
   new_node->int_val = int_val;
 
   if (string_val != NULL) {
-
-    char *s = malloc(strlen(string_val) + 1);
-    strcpy(s, string_val);
-
-    new_node->string_val = s;
+    new_node->string_val = strdup(string_val);
   } else {
     new_node->string_val = NULL;
   }

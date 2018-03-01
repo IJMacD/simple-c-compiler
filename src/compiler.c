@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "compiler.h"
 
@@ -102,18 +103,22 @@ ast_node* operator_switcher(ast_node *node, ast_node *parent) {
   if (node->type == NODE_OPERATOR) {
     node->type = NODE_CALL;
 
-    if (node->string_val[0] == '+') {
-      node->string_val = "add";
+    char *string_val = node->string_val;
+
+    if (string_val[0] == '+') {
+      node->string_val = strdup("add");
     }
-    else if (node->string_val[0] == '-') {
-      node->string_val = "subtract";
+    else if (string_val[0] == '-') {
+      node->string_val = strdup("subtract");
     }
-    else if (node->string_val[0] == '*') {
-      node->string_val = "multiply";
+    else if (string_val[0] == '*') {
+      node->string_val = strdup("multiply");
     }
-    else if (node->string_val[0] == '/') {
-      node->string_val = "divide";
+    else if (string_val[0] == '/') {
+      node->string_val = strdup("divide");
     }
+
+    free(string_val);
   }
 
   return node;
