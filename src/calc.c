@@ -12,6 +12,9 @@ int main(int argc, char **argv){
 #ifdef linux
 #include <unistd.h>
   srand(time(NULL) * getpid());
+#elif defined(_WIN32)
+// #include <process.h>
+  srand(time(NULL) * _getpid());
 #else
   srand(time(NULL));
 #endif
@@ -80,6 +83,12 @@ int main(int argc, char **argv){
     compiler(input_buffer, compiler_options);
   } else {
     int input_count = 0;
+    int is_tty = 0;
+#ifdef linux
+    is_tty = isatty(fileno(stdin));
+#endif
+
+    if (is_tty) fprintf(stdout, "input> ");
     while(fgets(input_buffer, MAX_INPUT_SIZE, stdin) != NULL){
       if(input_buffer[0] == '\n') {
         if(input_count == 0) {
@@ -88,6 +97,7 @@ int main(int argc, char **argv){
         exit(-1);
       }
       compiler(input_buffer, compiler_options);
+      if (is_tty) fprintf(stdout, "input> ");
       input_count++;
     }
   }
