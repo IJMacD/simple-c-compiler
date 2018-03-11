@@ -124,19 +124,21 @@ char* generate_statement(ast_node *node) {
 char* generate_call (ast_node *node) {
   if (strcmp(node->string_val, "printf") == 0) {
 
-    char *output;
+    const char * fmt = "call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([5 x i8], [5 x i8]* @.str, i32 0, i32 0), i64 %s)\n";
+    char * param;
+
     if (node->param2->type == NODE_NAME) {
-      const char * fmt = "call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([5 x i8], [5 x i8]* @.str, i32 0, i32 0), i64 %s)\n";
-      output = calloc(strlen(fmt) + strlen(node->param2->string_val), 1);
-      sprintf(output, fmt, node->param2->string_val);
+      param = node->param2->string_val;
     } else if (node->param2->type == NODE_NUMBER) {
-      const char * fmt = "call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([5 x i8], [5 x i8]* @.str, i32 0, i32 0), i64 %lu)\n";
-      output = calloc(strlen(fmt) + 32, 1);
-      sprintf(output, fmt, node->param2->int_val);
+      param = malloc(32);
+      sprintf(param, "%lu", node->param2->int_val);
     } else {
       fprintf(stderr, "Generator Error: call can only operate on named vars or numbers.\n");
       exit(-1);
     }
+
+    char *output = malloc(strlen(fmt) - 2 + strlen(param) + 1);
+    sprintf(output, fmt, param);
 
     return output;
   }

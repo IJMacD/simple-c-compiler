@@ -145,6 +145,11 @@ ast_node* constant_folder(ast_node *node, ast_node *parent) {
           result = node->param1->int_val * node->param2->int_val;
           break;
         case '/':
+          if (node->param2->int_val == 0) {
+            // If divide by zero pass it on.
+            // It's not our problem...
+            return node;
+          }
           result = node->param1->int_val / node->param2->int_val;
           break;
         default:
