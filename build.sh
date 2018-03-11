@@ -16,3 +16,7 @@ clang -lm *.o -o calc-python
 rm *.o
 clang -c ../src/*.c ../src/llvm/*.c
 clang -lm *.o -o calc-llvm
+
+rm *.o
+clang -c ../src/*.c ../src/wasm/*.c
+clang -lm *.o -o calc-wasm
