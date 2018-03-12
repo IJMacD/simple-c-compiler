@@ -52,7 +52,7 @@ char* generate(ast_node *node) {
 
 char* generate_program(ast_node *node) {
   static const char head[] = "int main(){\n";
-  static const char tail[] = "}\n";
+  static const char tail[] = "\treturn 0;\n}\n";
 
   static const int head_len = sizeof(head) - 1;
   static const int tail_len = sizeof(tail) - 1;
