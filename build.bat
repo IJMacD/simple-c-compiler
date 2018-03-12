@@ -13,3 +13,6 @@ cl.exe %compilerflags% ../src/*.c ../src/python/*.c /link %linkerflags%
 
 set linkerflags=/OUT:calc-llvm.exe
 cl.exe %compilerflags% ../src/*.c ../src/llvm/*.c /link %linkerflags%
+
+set linkerflags=/OUT:calc-wasm.exe
+cl.exe %compilerflags% ../src/*.c ../src/wasm/*.c /link %linkerflags%
