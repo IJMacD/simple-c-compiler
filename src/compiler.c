@@ -85,8 +85,6 @@ void compiler(const char *input, int options) {
 
     char *output = linker(program, linker_flags);
 
-    free(program);
-
     if(options & OPTION_PRINT) {
       fprintf(stdout, "%s\n", output);
     }
@@ -94,7 +92,12 @@ void compiler(const char *input, int options) {
       runner(output, options & OPTION_RETAIN);
     }
 
-    free(output);
+    if (program == output) {
+      free(program);
+    } else {
+      free(program);
+      free(output);
+    }
   }
   free_node(root_node);
 }
