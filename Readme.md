@@ -3,7 +3,7 @@ SimpleCalc
 
 A compiling (or directly executing) calculator using [Polish Notation](https://en.wikipedia.org/wiki/Polish_notation) as input.
 
-Three different source transformers are provided (C, Java, Python).
+A number of different source output transformers are provided (C, Java, Python, LLVM, WASM).
 
 Build using `./build.sh` or `.\build.bat` then follow usage instructions.
 
@@ -30,9 +30,10 @@ Build using `./build.sh` or `.\build.bat` then follow usage instructions.
         ./build/calc "+ 7 * 3 5"
         ./build/calc "add 5 subtract 4 2"
 
-SimpleCalc can also produce graphical output (with the help of GrahViz's `dot`). For example the input:
+SimpleCalc can also produce graphical output (with the help of GrahViz's `dot`). 
+For example the input:  
 
     ./build/calc -g "+ 91 * * 2 + 1 + 0 5 - 11 - 2 - 9 + 27 8"
 
-Will produce something like:
+Will produce something like:  
 ![Sample Graphical Output](./sample.png)
