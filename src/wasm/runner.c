@@ -7,9 +7,9 @@ void runner(const char *output, int retain) {
   fclose(f);
 
 #ifdef linux
-  system("wat2wasm output.wat -o output.wasm && wasm-interop output.wasm && rm output.wasm");
+  system("wat2wasm output.wat -o output.wasm && wasm-interp output.wasm --run-all-exports && rm output.wasm");
 #else
-  system("wat2wasm output.wat -o output.wasm && wasm-interop output.wasm && del output.wasm");
+  system("wat2wasm output.wat -o output.wasm && wasm-interp output.wasm --run-all-exports && del output.wasm");
 #endif
 
   if (!(retain)) {

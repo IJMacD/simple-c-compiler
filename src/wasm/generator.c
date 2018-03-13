@@ -4,6 +4,8 @@
 
 #include "../generator.h"
 
+#define BODY_SIZE 2048
+
 int *include_flags;
 
 char* generator(ast_node *node, int *flags) {
@@ -65,7 +67,7 @@ char* generate_program(ast_node *node) {
   static const int head_len = sizeof(head) - 1;
   static const int tail_len = sizeof(tail) - 1;
 
-  char body[1024];
+  char body[BODY_SIZE];
   size_t offset = 0;
   int  i;
 
@@ -73,8 +75,8 @@ char* generate_program(ast_node *node) {
     if(node->body[i] != NULL){
       char *child = generate(node->body[i]);
       int len = strlen(child);
-      if(offset + len > 1024) {
-        fprintf(stderr, "Generator Error: Not enough space reserved for body.");
+      if(offset + len > BODY_SIZE) {
+        fprintf(stderr, "Generator Error: Not enough space reserved for body.\n");
         exit(-1);
       }
       append(body, &offset, child);

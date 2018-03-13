@@ -74,7 +74,7 @@ char* generate_program(ast_node *node) {
       char *child = generate(node->body[i]);
       int len = strlen(child);
       if(offset + len > 1024) {
-        fprintf(stderr, "Generator Error: Not enough space reserved for body.");
+        fprintf(stderr, "Generator Error: Not enough space reserved for body.\n");
         exit(-1);
       }
       body[offset++] = '\t';
