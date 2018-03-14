@@ -22,3 +22,7 @@ $CC -lm *.o -o calc-llvm
 rm -f *.o
 $CC -c ../src/*.c ../src/wasm/*.c
 $CC -lm *.o -o calc-wasm
+
+rm -f *.o
+$CC -c ../src/*.c ../src/cil/*.c
+$CC -lm *.o -o calc-cil

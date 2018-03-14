@@ -16,3 +16,6 @@ cl.exe %compilerflags% ../src/*.c ../src/llvm/*.c /link %linkerflags%
 
 set linkerflags=/OUT:calc-wasm.exe
 cl.exe %compilerflags% ../src/*.c ../src/wasm/*.c /link %linkerflags%
+
+set linkerflags=/OUT:calc-cil.exe
+cl.exe %compilerflags% ../src/*.c ../src/cil/*.c /link %linkerflags%
