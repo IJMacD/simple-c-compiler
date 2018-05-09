@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../generator.h"
+#include "../common/generator.h"
 
 int *include_flags;
 

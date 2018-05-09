@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../common/runner.h"
+
 void runner(const char *output, int retain) {
   FILE *f = fopen("output.ll", "w");
   fprintf(f, "%s", output);

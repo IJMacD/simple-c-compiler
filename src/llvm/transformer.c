@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../transformer.h"
+#include "../common/transformer.h"
 
 ast_node *visitor_enter(ast_node *node, ast_node *parent);
 ast_node *visitor_leave(ast_node *node, ast_node *parent);
