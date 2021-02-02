@@ -1,5 +1,5 @@
-FLAVOURS = c cil java llvm python wasm
-FLAVOUR = c
+FLAVOURS = c cil dotnet java llvm python wasm
+FLAVOUR = dotnet
 TARGET = calc-$(FLAVOUR)
 LIBS = -lm
 CC = cc

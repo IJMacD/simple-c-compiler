@@ -69,6 +69,10 @@ int main(int argc, char **argv){
       }
     }
 
+    if ((compiler_options & OPTION_PRINT) && (compiler_options & (OPTION_COMPILE | OPTION_GRAPH)) == 0) {
+      fprintf(stderr, "-p option provided without -c or -g\n");
+    }
+
     input_buffer[offset] = '\0';
   }
 
@@ -111,7 +115,7 @@ void display_help(FILE *fd, char *name) {
   "Linker, Executor. If PROGRAM is not given it will expect input on stdin.\n\n"
   "\t-r\tRetain output source (don't auto-delete)\n"
   "\t-p\tPrint generated source to stdout\n"
-  "\t\t(won't compile or output image file)\n"
+  "\t\t(won't compile or output image file, requires -c or -g)\n"
   "\t-v\tVerbose output (display tokens and AST)\n"
   "\t-t\tTransform AST (to function based rather than operator based)\n"
   "\t-O\tOptimise AST (perform Constant Folding)\n"
